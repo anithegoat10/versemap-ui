@@ -28,6 +28,8 @@ interface NormalizedPin {
   releaseYear: number | null;
   sceneTags: string[];
   rawQuery: string;
+  image_url: string | null;
+  audio_preview_url: string | null;
   exactVerseTimestamp?: string;
   exactVerseSeconds?: number;
   previewSeekSeconds?: number;
@@ -42,6 +44,7 @@ interface SongResolution {
   exactVerseSeconds: number;
   previewSeekSeconds: number;
   wikiSlug?: string;
+  defaultImageUrl?: string;
 }
 
 interface ViewportBounds {
@@ -88,7 +91,6 @@ const ROUTE_DASH_PAINT: any = {
   'line-dasharray': [2, 2],
 };
 
-// Step 4.2: Only clusters are rendered in WebGL; unclustered pins render as custom HTML/SVG <Marker>s
 const INTERACTIVE_LAYER_IDS = ['clusters'];
 const CLUSTER_MAX_ZOOM = 13;
 const CLUSTER_RADIUS_PX = 42;
@@ -172,6 +174,9 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1965,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: 'Upper Byrdcliffe Rd, Woodstock, NY',
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/b/b1/Bob_Dylan_-_Bringing_It_All_Back_Home.jpg',
+    audio_preview_url: null,
     wikiSlug: 'Bringing_It_All_Back_Home',
   },
   {
@@ -190,6 +195,9 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1965,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: '4 Gramercy Park West, New York, NY',
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
+    audio_preview_url: null,
     wikiSlug: 'Highway_61_Revisited',
   },
   {
@@ -208,6 +216,9 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1966,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: 'W 14th St & 9th Ave, New York, NY',
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/3/38/Bob_Dylan_-_Blonde_on_Blonde.jpg',
+    audio_preview_url: null,
     wikiSlug: 'Blonde_on_Blonde',
   },
   {
@@ -226,6 +237,9 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1967,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: 'Woodstock, NY',
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/e/e8/Bob_Dylan_-_John_Wesley_Harding.jpg',
+    audio_preview_url: null,
     wikiSlug: 'John_Wesley_Harding',
   },
   {
@@ -244,6 +258,9 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1969,
     sceneTags: [],
     rawQuery: '34 Music Square E, Nashville, TN',
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/5/5c/Bob_Dylan_-_Nashville_Skyline.jpg',
+    audio_preview_url: null,
     wikiSlug: 'Nashville_Skyline',
   },
   {
@@ -262,6 +279,9 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1975,
     sceneTags: [],
     rawQuery: 'Ashtabula, OH',
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
+    audio_preview_url: null,
   },
   {
     id: 'lyric-bishopsgate',
@@ -279,6 +299,9 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1967,
     sceneTags: ['SWINGING_LONDON'],
     rawQuery: 'Bishopsgate, London, UK',
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/5/50/Sgt._Pepper%27s_Lonely_Hearts_Club_Band.jpg',
+    audio_preview_url: null,
   },
 ];
 
@@ -305,7 +328,6 @@ function getHaversineDistanceKm(
   return earthRadiusKm * c;
 }
 
-// Web Mercator pixel projection for zero-dependency unclustered pin detection
 function projectToWorldPixels(lat: number, lng: number, zoom: number): { x: number; y: number } {
   const worldSize = 512 * Math.pow(2, Math.floor(zoom));
   const x = ((lng + 180) / 360) * worldSize;
@@ -543,6 +565,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 14,
       previewSeekSeconds: 0,
       wikiSlug: "Giant's_Causeway",
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/9/9f/Led_Zeppelin_-_Houses_of_the_Holy.jpg',
     };
   }
 
@@ -555,6 +579,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 10,
       previewSeekSeconds: 0,
       wikiSlug: 'Bob_Dylan_mural',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/4/4b/Bob_Dylan_Mural_by_Eduardo_Kobra.jpg',
     };
   }
 
@@ -567,6 +593,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 12,
       previewSeekSeconds: 0,
       wikiSlug: 'MacDougal_Street',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MacDougal_Street_Greenwich_Village.jpg/640px-MacDougal_Street_Greenwich_Village.jpg',
     };
   }
 
@@ -579,6 +607,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 8,
       previewSeekSeconds: 0,
       wikiSlug: 'The_Bitter_End',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/The_Bitter_End_NYC.jpg/640px-The_Bitter_End_NYC.jpg',
     };
   }
 
@@ -591,6 +621,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 2,
       previewSeekSeconds: 0,
       wikiSlug: 'Olympic_Studios',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Olympic_Studios_Barnes.jpg/640px-Olympic_Studios_Barnes.jpg',
     };
   }
 
@@ -602,6 +634,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '1:45 (Honolulu, San Francisco & Ashtabula Verse)',
       exactVerseSeconds: 105,
       previewSeekSeconds: 4,
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
     };
   }
 
@@ -614,6 +648,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 51,
       previewSeekSeconds: 8,
       wikiSlug: "Standin'_on_the_Corner_Park",
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/0/00/Eagles_-_Eagles.jpg',
     };
   }
 
@@ -626,6 +662,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 68,
       previewSeekSeconds: 6,
       wikiSlug: 'Paramount_Ranch',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/e/e6/Eagles_-_Desperado.jpg',
     };
   }
 
@@ -638,6 +676,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 53,
       previewSeekSeconds: 4,
       wikiSlug: 'The_Beverly_Hills_Hotel',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/4/49/Hotelcalifornia.jpg',
     };
   }
 
@@ -649,6 +689,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 2,
       previewSeekSeconds: 0,
       wikiSlug: '3_Savile_Row',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/2/25/LetItBe.jpg',
     };
   }
 
@@ -661,6 +703,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
         exactVerseSeconds: 45,
         previewSeekSeconds: 4,
         wikiSlug: 'Royal_Albert_Hall',
+        defaultImageUrl:
+          'https://upload.wikimedia.org/wikipedia/en/e/ef/Led_Zeppelin_-_Led_Zeppelin_%281969%29_front_cover.png',
       };
     }
     return {
@@ -671,6 +715,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 198,
       previewSeekSeconds: 5,
       wikiSlug: 'Royal_Albert_Hall',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/5/50/Sgt._Pepper%27s_Lonely_Hearts_Club_Band.jpg',
     };
   }
 
@@ -683,6 +729,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 65,
       previewSeekSeconds: 12,
       wikiSlug: 'Grantchester_Meadows',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/1/12/PinkFloyd-album-ummagumma.jpg',
     };
   }
 
@@ -695,6 +743,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 62,
       previewSeekSeconds: 5,
       wikiSlug: 'Battersea_Power_Station',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/7/74/Pink_Floyd-Animals-Frontal.jpg',
     };
   }
 
@@ -708,6 +758,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
         exactVerseSeconds: 138,
         previewSeekSeconds: 6,
         wikiSlug: 'Abbey_Road_Studios',
+        defaultImageUrl:
+          'https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png',
       };
     }
     return {
@@ -718,6 +770,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 14,
       previewSeekSeconds: 0,
       wikiSlug: 'Abbey_Road',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/4/42/Beatles_-_Abbey_Road.jpg',
     };
   }
 
@@ -730,6 +784,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 95,
       previewSeekSeconds: 5,
       wikiSlug: 'Britannia_Row_Studios',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/7/74/Pink_Floyd-Animals-Frontal.jpg',
     };
   }
 
@@ -742,6 +798,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 18,
       previewSeekSeconds: 3,
       wikiSlug: 'Bron-Yr-Aur',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/5/5f/Led_Zeppelin_-_Led_Zeppelin_III.png',
     };
   }
 
@@ -754,6 +812,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 0,
       previewSeekSeconds: 0,
       wikiSlug: 'Headley_Grange',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/2/26/Led_Zeppelin_-_Led_Zeppelin_IV.jpg',
     };
   }
 
@@ -766,6 +826,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 0,
       previewSeekSeconds: 0,
       wikiSlug: 'Physical_Graffiti',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/e/e3/Led_Zeppelin_-_Physical_Graffiti.jpg',
     };
   }
 
@@ -777,6 +839,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '1:58 (Delacroix Fishing Boat Verse)',
       exactVerseSeconds: 118,
       previewSeekSeconds: 4,
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
     };
   }
 
@@ -788,6 +852,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '2:56 (Montague Street Basement Verse)',
       exactVerseSeconds: 176,
       previewSeekSeconds: 4,
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
     };
   }
 
@@ -800,6 +866,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 42,
       previewSeekSeconds: 2,
       wikiSlug: 'Dealey_Plaza',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/5/51/Bob_Dylan_-_Rough_and_Rowdy_Ways.png',
     };
   }
 
@@ -812,6 +880,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 65,
       previewSeekSeconds: 5,
       wikiSlug: 'Columbia_Records',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
     };
   }
 
@@ -824,6 +894,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 8,
       previewSeekSeconds: 0,
       wikiSlug: "The_Freewheelin'_Bob_Dylan",
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/d/d6/Bob_Dylan_-_The_Freewheelin%27_Bob_Dylan.jpg',
     };
   }
   if (/bringing it all back home|byrdcliffe/i.test(text)) {
@@ -835,6 +907,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 6,
       previewSeekSeconds: 0,
       wikiSlug: 'Bringing_It_All_Back_Home',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/b/b1/Bob_Dylan_-_Bringing_It_All_Back_Home.jpg',
     };
   }
   if (/highway 61|gramercy/i.test(text)) {
@@ -846,6 +920,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 12,
       previewSeekSeconds: 2,
       wikiSlug: 'Highway_61_Revisited',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
     };
   }
   if (/blonde on blonde|14th st/i.test(text)) {
@@ -857,6 +933,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 18,
       previewSeekSeconds: 2,
       wikiSlug: 'Blonde_on_Blonde',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/3/38/Bob_Dylan_-_Blonde_on_Blonde.jpg',
     };
   }
   if (/john wesley harding/i.test(text)) {
@@ -868,6 +946,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 15,
       previewSeekSeconds: 0,
       wikiSlug: 'John_Wesley_Harding',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/e/e8/Bob_Dylan_-_John_Wesley_Harding.jpg',
     };
   }
   if (/nashville skyline|music square/i.test(text)) {
@@ -879,6 +959,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 16,
       previewSeekSeconds: 0,
       wikiSlug: 'Nashville_Skyline',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/5/5c/Bob_Dylan_-_Nashville_Skyline.jpg',
     };
   }
 
@@ -891,6 +973,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 15,
       previewSeekSeconds: 0,
       wikiSlug: 'MacDougal_Street',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/3/38/Bob_Dylan_-_Bob_Dylan.jpg',
     };
   }
   if (/chelsea hotel|hotel chelsea/i.test(text)) {
@@ -902,6 +986,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 215,
       previewSeekSeconds: 4,
       wikiSlug: 'Hotel_Chelsea',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/0/0e/Bob_Dylan_-_Desire.jpg',
     };
   }
   if (/gerde|folk city/i.test(text)) {
@@ -913,6 +999,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 8,
       previewSeekSeconds: 0,
       wikiSlug: 'MacDougal_Street',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/d/d6/Bob_Dylan_-_The_Freewheelin%27_Bob_Dylan.jpg',
     };
   }
   if (/penny lane/i.test(text)) {
@@ -923,6 +1011,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 4,
       previewSeekSeconds: 0,
       wikiSlug: 'Penny_Lane',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/e/e8/MagicalMysteryTourDoubleEPcover.jpg',
     };
   }
   if (/strawberry field/i.test(text)) {
@@ -933,6 +1023,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 12,
       previewSeekSeconds: 0,
       wikiSlug: 'Strawberry_Field',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/e/e8/MagicalMysteryTourDoubleEPcover.jpg',
     };
   }
   if (/cavern club/i.test(text)) {
@@ -943,6 +1035,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 3,
       previewSeekSeconds: 0,
       wikiSlug: 'The_Cavern_Club',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/c/c0/PleasePleaseMe_audio_cover.jpg',
     };
   }
   if (/bishopsgate|mr\.?\s*kite/i.test(text)) {
@@ -952,6 +1046,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '0:22 (Bishopsgate Verse)',
       exactVerseSeconds: 22,
       previewSeekSeconds: 0,
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/5/50/Sgt._Pepper%27s_Lonely_Hearts_Club_Band.jpg',
     };
   }
   if (/troubadour/i.test(text)) {
@@ -962,6 +1058,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 18,
       previewSeekSeconds: 3,
       wikiSlug: 'Troubadour_(West_Hollywood,_California)',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/0/00/Eagles_-_Eagles.jpg',
     };
   }
   if (/ufo club|roundhouse/i.test(text)) {
@@ -972,6 +1070,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 28,
       previewSeekSeconds: 4,
       wikiSlug: 'Roundhouse_(venue)',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/3/3c/PinkFloyd-album-piperatthegatesofdawn_300.jpg',
     };
   }
   if (/warner bros|wish you were here/i.test(text)) {
@@ -983,6 +1083,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 78,
       previewSeekSeconds: 5,
       wikiSlug: 'Wish_You_Were_Here_(Pink_Floyd_album)',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/a/a4/Pink_Floyd%2C_Wish_You_Were_Here_%281975%29.png',
     };
   }
 
@@ -994,6 +1096,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 65,
       previewSeekSeconds: 4,
       wikiSlug: 'Bob_Dylan',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
     };
   }
   if (artistLower.includes('zeppelin')) {
@@ -1004,6 +1108,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 2,
       previewSeekSeconds: 0,
       wikiSlug: 'Led_Zeppelin',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/2/26/Led_Zeppelin_-_Led_Zeppelin_IV.jpg',
     };
   }
   if (artistLower.includes('beatles')) {
@@ -1014,6 +1120,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 10,
       previewSeekSeconds: 0,
       wikiSlug: 'The_Beatles',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/7/74/Rubber_Soul.jpg',
     };
   }
   if (artistLower.includes('eagles')) {
@@ -1024,6 +1132,8 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 13,
       previewSeekSeconds: 4,
       wikiSlug: 'Eagles_(band)',
+      defaultImageUrl:
+        'https://upload.wikimedia.org/wikipedia/en/4/49/Hotelcalifornia.jpg',
     };
   }
   return {
@@ -1033,6 +1143,65 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
     exactVerseSeconds: 78,
     previewSeekSeconds: 5,
     wikiSlug: 'Pink_Floyd',
+    defaultImageUrl:
+      'https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png',
+  };
+}
+
+// Shared Row Normalizer used by both initial Supabase load and Realtime INSERT listener
+function normalizeDatabaseRow(row: any, fallbackIdx: number): NormalizedPin {
+  const lat = Number(row.lat ?? row.latitude);
+  const lng = Number(row.lng ?? row.longitude);
+  const rawTitle = String(row.title ?? row.location_name ?? 'Untitled Location').trim();
+  const rawArtist = String(row.artist ?? row.artist_name ?? 'Classic Rock Artist').trim();
+  const rawCategory = String(row.pin_type ?? row.category ?? 'HISTORIC_VENUE');
+
+  const fixedCategory = normalizeAndFixCategory(rawTitle, rawCategory, rawArtist);
+
+  const basePin: NormalizedPin = {
+    id: row.id ?? fallbackIdx,
+    title: rawTitle,
+    artist: rawArtist,
+    category: fixedCategory,
+    lat: lat,
+    lng: lng,
+    placeId: row.google_place_id ?? row.place_id ?? '',
+    siteStatus: row.site_status ?? '',
+    businessStatus: row.business_status ?? row.live_status ?? '',
+    lyricOrContext:
+      row.lyric_quote ??
+      row.historical_context ??
+      row.context ??
+      row.description ??
+      row.lore ??
+      'Verified historic music landmark and cultural touchstone.',
+    songOrAlbum:
+      row.song_title ??
+      row.album_title ??
+      row.source_work ??
+      row.song ??
+      row.album ??
+      '',
+    releaseYear: row.release_year ? Number(row.release_year) : null,
+    sceneTags: Array.isArray(row.scene_tags) ? row.scene_tags : [],
+    rawQuery: row.search_query ?? row.query ?? row.address ?? '',
+    image_url: row.image_url ? String(row.image_url) : null,
+    audio_preview_url: row.audio_preview_url ? String(row.audio_preview_url) : null,
+  };
+
+  const resolved = resolvePinTrack(basePin);
+  const enrichedLore = resolvePinLore(basePin);
+
+  return {
+    ...basePin,
+    artist: resolved.artist || basePin.artist,
+    songOrAlbum: resolved.song || basePin.songOrAlbum,
+    lyricOrContext: enrichedLore,
+    image_url: basePin.image_url || resolved.defaultImageUrl || null,
+    exactVerseTimestamp: resolved.exactVerseTimestamp,
+    exactVerseSeconds: resolved.exactVerseSeconds,
+    previewSeekSeconds: resolved.previewSeekSeconds,
+    wikiSlug: resolved.wikiSlug,
   };
 }
 
@@ -1043,127 +1212,6 @@ function getCategoryColor(category: string): string {
   if (upper.includes('VENUE')) return '#10b981';
   if (upper.includes('TRIBUTE') || upper.includes('MURAL')) return '#a855f7';
   return '#f59e0b';
-}
-
-// Step 4.2: Custom Inline SVG Icon Renderer for the 4 Pin Categories
-function renderCategorySvgIcon(category: string, color: string) {
-  const upper = (category || '').toUpperCase();
-
-  // 1. ALBUM_COVER: Stylized Vinyl Record / LP Disc
-  if (upper.includes('COVER') || upper.includes('ALBUM')) {
-    return (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle cx="12" cy="12" r="9.5" fill="#09090b" stroke={color} strokeWidth="2" />
-        <path
-          d="M7.5 12A4.5 4.5 0 0 1 12 7.5"
-          stroke={color}
-          strokeWidth="1.3"
-          strokeLinecap="round"
-          opacity="0.75"
-        />
-        <path
-          d="M16.5 12A4.5 4.5 0 0 1 12 16.5"
-          stroke={color}
-          strokeWidth="1.3"
-          strokeLinecap="round"
-          opacity="0.75"
-        />
-        <circle cx="12" cy="12" r="3.2" fill={color} />
-        <circle cx="12" cy="12" r="1.1" fill="#09090b" />
-      </svg>
-    );
-  }
-
-  // 2. HISTORIC_VENUE: Minimalist Vintage Stage Microphone
-  if (upper.includes('VENUE')) {
-    return (
-      <svg
-        width="17"
-        height="17"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect
-          x="9"
-          y="3"
-          width="6"
-          height="10"
-          rx="3"
-          fill={color}
-          fillOpacity="0.25"
-          stroke={color}
-          strokeWidth="2"
-        />
-        <line x1="9" y1="7.5" x2="15" y2="7.5" stroke={color} strokeWidth="1.4" />
-        <path
-          d="M6 10.5V11C6 14.3137 8.68629 17 12 17C15.3137 17 18 14.3137 18 11V10.5"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <line x1="12" y1="17" x2="12" y2="21" stroke={color} strokeWidth="2" strokeLinecap="round" />
-        <line x1="8.5" y1="21" x2="15.5" y2="21" stroke={color} strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    );
-  }
-
-  // 3. TRIBUTE_MURAL: Stylized Artist Paintbrush
-  if (upper.includes('TRIBUTE') || upper.includes('MURAL')) {
-    return (
-      <svg
-        width="17"
-        height="17"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M18.37 3.63C19.15 4.41 19.15 5.68 18.37 6.46L11.5 13.33L8.67 10.5L15.54 3.63C16.32 2.85 17.59 2.85 18.37 3.63Z"
-          fill={color}
-          fillOpacity="0.3"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M8.67 10.5L11.5 13.33C11.5 15.8 9.8 18.5 6.5 19.5C5.2 19.89 4.2 19.6 3.5 19C4.1 17.8 4.4 16.5 4.7 15.2C5.2 12.8 6.8 11.2 8.67 10.5Z"
-          fill={color}
-          stroke={color}
-          strokeWidth="1.6"
-          strokeLinejoin="round"
-        />
-      </svg>
-    );
-  }
-
-  // 4. LYRIC_MENTION (Default): Beamed Double Musical Note
-  return (
-    <svg
-      width="17"
-      height="17"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M9 17.5V6.5L19 4.5V15.5"
-        stroke={color}
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path d="M9 9.5L19 7.5" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="6.5" cy="17.5" r="2.7" fill={color} />
-      <circle cx="16.5" cy="15.5" r="2.7" fill={color} />
-    </svg>
-  );
 }
 
 function getSurvivalBadge(siteStatus: string, businessStatus: string) {
@@ -1212,17 +1260,14 @@ export default function VerseMapPage() {
   const [placeSearch, setPlaceSearch] = useState('');
   const [mapCursor, setMapCursor] = useState('grab');
 
-  // Step 4.2: Viewport & Hover State for Custom HTML/SVG Unclustered Markers
   const [mapZoom, setMapZoom] = useState(INITIAL_MAP_VIEW.zoom);
   const [mapBounds, setMapBounds] = useState(DEFAULT_BOUNDS as ViewportBounds);
   const [hoveredPinId, setHoveredPinId] = useState(null as string | number | null);
+  const [brokenImageIds, setBrokenImageIds] = useState({} as Record<string, boolean>);
 
   const [selectedPin, setSelectedPin] = useState(null as NormalizedPin | null);
-  const [audioLoading, setAudioLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null as string | null);
   const [audioTrackName, setAudioTrackName] = useState('');
-  const [audioArtwork, setAudioArtwork] = useState(null as string | null);
-  const [pinVisualUrl, setPinVisualUrl] = useState(null as string | null);
   const [isPlayingPreview, setIsPlayingPreview] = useState(false);
   const [audioProgress, setAudioProgress] = useState(0);
   const [audioCurrentTime, setAudioCurrentTime] = useState(0);
@@ -1263,6 +1308,7 @@ export default function VerseMapPage() {
     }
   };
 
+  // Initial Supabase Fetch
   useEffect(function () {
     async function fetchPins() {
       setLoading(true);
@@ -1278,56 +1324,7 @@ export default function VerseMapPage() {
 
       const dbPins: NormalizedPin[] = (data || [])
         .map(function (row: any, idx: number) {
-          const lat = Number(row.lat ?? row.latitude);
-          const lng = Number(row.lng ?? row.longitude);
-          const rawTitle = String(row.title ?? row.location_name ?? 'Untitled Location').trim();
-          const rawArtist = String(row.artist ?? row.artist_name ?? 'Classic Rock Artist').trim();
-          const rawCategory = String(row.pin_type ?? row.category ?? 'HISTORIC_VENUE');
-
-          const fixedCategory = normalizeAndFixCategory(rawTitle, rawCategory, rawArtist);
-
-          const basePin: NormalizedPin = {
-            id: row.id ?? idx,
-            title: rawTitle,
-            artist: rawArtist,
-            category: fixedCategory,
-            lat,
-            lng,
-            placeId: row.google_place_id ?? row.place_id ?? '',
-            siteStatus: row.site_status ?? '',
-            businessStatus: row.business_status ?? row.live_status ?? '',
-            lyricOrContext:
-              row.lyric_quote ??
-              row.historical_context ??
-              row.context ??
-              row.description ??
-              row.lore ??
-              'Verified historic music landmark and cultural touchstone.',
-            songOrAlbum:
-              row.song_title ??
-              row.album_title ??
-              row.source_work ??
-              row.song ??
-              row.album ??
-              '',
-            releaseYear: row.release_year ? Number(row.release_year) : null,
-            sceneTags: Array.isArray(row.scene_tags) ? row.scene_tags : [],
-            rawQuery: row.search_query ?? row.query ?? row.address ?? '',
-          };
-
-          const resolved = resolvePinTrack(basePin);
-          const enrichedLore = resolvePinLore(basePin);
-
-          return {
-            ...basePin,
-            artist: resolved.artist || basePin.artist,
-            songOrAlbum: resolved.song,
-            lyricOrContext: enrichedLore,
-            exactVerseTimestamp: resolved.exactVerseTimestamp,
-            exactVerseSeconds: resolved.exactVerseSeconds,
-            previewSeekSeconds: resolved.previewSeekSeconds,
-            wikiSlug: resolved.wikiSlug,
-          };
+          return normalizeDatabaseRow(row, idx);
         })
         .filter(function (p: NormalizedPin) {
           if (Number.isNaN(p.lat) || Number.isNaN(p.lng) || p.lat === 0 || p.lng === 0) {
@@ -1360,6 +1357,7 @@ export default function VerseMapPage() {
             ...sup,
             songOrAlbum: resolved.song,
             lyricOrContext: resolvePinLore(sup),
+            image_url: sup.image_url || resolved.defaultImageUrl || null,
             exactVerseTimestamp: resolved.exactVerseTimestamp,
             exactVerseSeconds: resolved.exactVerseSeconds,
             previewSeekSeconds: resolved.previewSeekSeconds,
@@ -1375,6 +1373,41 @@ export default function VerseMapPage() {
     fetchPins();
   }, []);
 
+  // Step 4.3: Real-Time Supabase INSERT Subscription
+  useEffect(function () {
+    const channel = supabase
+      .channel('custom-all-channel')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'pins' },
+        function (payload: any) {
+          if (!payload || !payload.new) return;
+          const insertedPin = normalizeDatabaseRow(payload.new, Date.now());
+          if (
+            Number.isNaN(insertedPin.lat) ||
+            Number.isNaN(insertedPin.lng) ||
+            insertedPin.lat === 0 ||
+            insertedPin.lng === 0
+          ) {
+            return;
+          }
+          setPins(function (prevPins) {
+            const exists = prevPins.some(function (existing) {
+              return String(existing.id) === String(insertedPin.id);
+            });
+            if (exists) return prevPins;
+            return [...prevPins, insertedPin];
+          });
+        }
+      )
+      .subscribe();
+
+    return function () {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // Step 4.3 Cleanup: Sync audio state directly from backend-populated pin properties (no client API calls)
   useEffect(
     function () {
       if (audioRef.current) {
@@ -1385,182 +1418,22 @@ export default function VerseMapPage() {
       setIsPlayingPreview(false);
       setAudioProgress(0);
       setAudioCurrentTime(0);
-      setPinVisualUrl(null);
 
       if (!selectedPin) {
         setAudioUrl(null);
         setAudioTrackName('');
-        setAudioArtwork(null);
-        setAudioLoading(false);
         return;
       }
 
-      let isCancelled = false;
-
-      async function fetchTrackAndPhoto(pin: NormalizedPin) {
-        setAudioLoading(true);
-        setAudioUrl(null);
-        setAudioArtwork(null);
-
-        const target = resolvePinTrack(pin);
-        setAudioTrackName(`${target.song} • ${target.artist}`);
-
-        if (/kobra|hennepin|minneapolis/i.test(pin.title)) {
-          setPinVisualUrl(
-            'https://upload.wikimedia.org/wikipedia/commons/4/4b/Bob_Dylan_Mural_by_Eduardo_Kobra.jpg'
-          );
-        } else if (pin.category === 'HISTORIC_VENUE' || pin.category === 'TRIBUTE_MURAL') {
-          const wikiPage =
-            target.wikiSlug ||
-            pin.wikiSlug ||
-            pin.title.split('—')[0].split('(')[0].trim().replace(/\s+/g, '_');
-
-          try {
-            const wikiRes = await fetch(
-              `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiPage)}`
-            );
-            if (wikiRes.ok) {
-              const wikiJson = await wikiRes.json();
-              const imgUrl =
-                (wikiJson.originalimage && wikiJson.originalimage.source) ||
-                (wikiJson.thumbnail && wikiJson.thumbnail.source) ||
-                null;
-              if (!isCancelled && imgUrl) {
-                setPinVisualUrl(imgUrl);
-              }
-            }
-          } catch (e) {
-            // Wikipedia fallback
-          }
-        }
-
-        const cleanArtistToken = target.artist
-          .toLowerCase()
-          .replace(/^the\s+/i, '')
-          .trim();
-
-        const coreSongToken = target.song
-          .toLowerCase()
-          .replace(/\([^)]*\)/g, '')
-          .replace(/[^a-z0-9\s]/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
-
-        const queries = [
-          `${target.artist} ${target.song}`,
-          `${target.artist} ${coreSongToken}`,
-          target.artist,
-        ];
-
-        for (const query of queries) {
-          try {
-            const url = `https://itunes.apple.com/search?term=${encodeURIComponent(
-              query
-            )}&media=music&entity=song&limit=25`;
-            const res = await fetch(url);
-            if (!res.ok) continue;
-
-            const json = await res.json();
-            const results: any[] = (json.results || []).filter(function (r: any) {
-              return Boolean(r.previewUrl);
-            });
-
-            const scored = results
-              .map(function (item: any) {
-                const itemArtist = String(item.artistName || '').toLowerCase();
-                const itemTrackRaw = String(item.trackName || '').toLowerCase();
-                const itemTrackCore = itemTrackRaw
-                  .replace(/\([^)]*\)/g, '')
-                  .replace(/[^a-z0-9\s]/g, ' ')
-                  .replace(/\s+/g, ' ')
-                  .trim();
-                const itemCollection = String(item.collectionName || '').toLowerCase();
-
-                let score = 0;
-
-                if (itemArtist.includes(cleanArtistToken)) {
-                  score += 120;
-                } else {
-                  score -= 300;
-                }
-
-                if (
-                  /karaoke|tribute|lullaby|8-bit|made famous|in the style/i.test(
-                    `${itemArtist} ${itemTrackRaw} ${itemCollection}`
-                  )
-                ) {
-                  score -= 400;
-                }
-
-                if (itemTrackCore === coreSongToken) {
-                  score += 100;
-                } else if (
-                  itemTrackCore.includes(coreSongToken) ||
-                  coreSongToken.includes(itemTrackCore)
-                ) {
-                  score += 70;
-                }
-
-                if (target.album) {
-                  const targetAlbumClean = target.album.toLowerCase().replace(/[^a-z0-9]/g, '');
-                  const itemAlbumClean = itemCollection.replace(/[^a-z0-9]/g, '');
-                  if (itemAlbumClean.includes(targetAlbumClean)) {
-                    score += 300;
-                  } else {
-                    score -= 100;
-                  }
-                }
-
-                return { item, score };
-              })
-              .filter(function (entry) {
-                return 100 <= entry.score;
-              })
-              .sort(function (a, b) {
-                return b.score - a.score;
-              });
-
-            if (!isCancelled && 0 < scored.length) {
-              const best = scored[0].item;
-              const thumb = best.artworkUrl100 || best.artworkUrl60 || null;
-              const hiResCover = thumb ? thumb.replace('100x100bb', '600x600bb') : null;
-
-              setAudioUrl(best.previewUrl);
-              setAudioTrackName(`${best.trackName} • ${best.artistName}`);
-              setAudioArtwork(thumb);
-
-              if (pin.category === 'ALBUM_COVER') {
-                setPinVisualUrl(hiResCover);
-              } else if (pin.category !== 'LYRIC_MENTION') {
-                setPinVisualUrl(function (prev) {
-                  return prev || hiResCover;
-                });
-              }
-
-              setAudioLoading(false);
-              return;
-            }
-          } catch (e) {
-            // Next query
-          }
-        }
-
-        if (!isCancelled) {
-          setAudioLoading(false);
-        }
-      }
-
-      fetchTrackAndPhoto(selectedPin);
-
-      return function () {
-        isCancelled = true;
-      };
+      const target = resolvePinTrack(selectedPin);
+      setAudioTrackName(`${target.song} • ${target.artist}`);
+      setAudioUrl(selectedPin.audio_preview_url || null);
     },
     [selectedPin]
   );
 
   const handleToggleAudio = function () {
-    if (!audioUrl || audioLoading) return;
+    if (!audioUrl) return;
 
     const seekOffset = selectedPin?.previewSeekSeconds ?? 0;
 
@@ -1734,7 +1607,6 @@ export default function VerseMapPage() {
     [spiderfiedPins, selectedPin]
   );
 
-  // Step 4.2: Compute visible unclustered pins + active Tour Bus stops for custom HTML/SVG rendering
   const visibleHtmlPins: NormalizedPin[] = useMemo(
     function () {
       const projectedList = spiderfiedPins.map(function (pin) {
@@ -1799,7 +1671,6 @@ export default function VerseMapPage() {
         }
       }
 
-      // Ensure any Tour Bus stop filtered out by category/artist still renders its numbered stop marker
       for (let k = 0; k < tourStops.length; k = k + 1) {
         const stop = tourStops[k];
         const stopIdStr = String(stop.id);
@@ -2028,7 +1899,6 @@ export default function VerseMapPage() {
     }
   };
 
-  // Step 4.2: Map Click Handler expands WebGL clusters or closes drawer on empty canvas click
   const handleMapClick = function (e: any) {
     if (!mapRef.current) {
       setSelectedPin(null);
@@ -2676,7 +2546,7 @@ export default function VerseMapPage() {
         </div>
       )}
 
-      {/* HYBRID MAPBOX CANVAS: WebGL Cluster Bubbles + Custom HTML/SVG Category Markers */}
+      {/* HYBRID MAPBOX CANVAS: WebGL Cluster Bubbles + Circular Image HTML Markers */}
       <MapboxMap
         ref={mapRef}
         initialViewState={INITIAL_MAP_VIEW}
@@ -2710,7 +2580,6 @@ export default function VerseMapPage() {
           </Source>
         )}
 
-        {/* WebGL Cluster Bubbles Only (Unclustered WebGL circles removed) */}
         <Source
           id="pins"
           type="geojson"
@@ -2734,16 +2603,18 @@ export default function VerseMapPage() {
           />
         </Source>
 
-        {/* Step 4.2: Custom HTML/SVG Markers for Visible Unclustered Pins + Tour Bus Stops */}
+        {/* Step 4.3: Circular Image Markers with Category-Colored Borders & Glowing Shadows */}
         {visibleHtmlPins.map(function (pin) {
           const pinColor = getCategoryColor(pin.category);
+          const pinIdKey = String(pin.id);
           const isSelected = selectedPin
-            ? String(selectedPin.id) === String(pin.id)
+            ? String(selectedPin.id) === pinIdKey
             : false;
-          const isHovered = hoveredPinId !== null && String(hoveredPinId) === String(pin.id);
+          const isHovered = hoveredPinId !== null && String(hoveredPinId) === pinIdKey;
           const stopNumber = getTourStopNumber(pin.id);
           const markerLat = pin.displayLat ?? pin.lat;
           const markerLng = pin.displayLng ?? pin.lng;
+          const hasValidImage = Boolean(pin.image_url) && !brokenImageIds[pinIdKey];
 
           let markerScale = 'scale(1)';
           if (isSelected) {
@@ -2754,7 +2625,7 @@ export default function VerseMapPage() {
 
           return (
             <Marker
-              key={`custom-marker-${pin.id}`}
+              key={`image-marker-${pin.id}`}
               latitude={markerLat}
               longitude={markerLng}
               anchor="bottom"
@@ -2816,10 +2687,11 @@ export default function VerseMapPage() {
 
                 <div
                   style={{
-                    width: 34,
-                    height: 34,
+                    width: 36,
+                    height: 36,
                     borderRadius: '50%',
-                    backgroundColor: '#121216',
+                    overflow: 'hidden',
+                    backgroundColor: hasValidImage ? '#18181b' : pinColor,
                     border: isSelected
                       ? '2.5px solid #ffffff'
                       : `2.5px solid ${pinColor}`,
@@ -2827,13 +2699,42 @@ export default function VerseMapPage() {
                       ? `0 0 20px ${pinColor}, 0 0 8px #ffffff`
                       : isHovered
                       ? `0 0 14px ${pinColor}`
-                      : `0 3px 10px rgba(0,0,0,0.75), 0 0 8px ${pinColor}44`,
+                      : `0 3px 10px rgba(0,0,0,0.75), 0 0 8px ${pinColor}55`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  {renderCategorySvgIcon(pin.category, pinColor)}
+                  {hasValidImage && pin.image_url ? (
+                    <img
+                      src={pin.image_url}
+                      alt={pin.title}
+                      onError={function () {
+                        setBrokenImageIds(function (prev) {
+                          const next = { ...prev };
+                          next[pinIdKey] = true;
+                          return next;
+                        });
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        borderRadius: '50%',
+                        display: 'block',
+                      }}
+                    />
+                  ) : (
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 800,
+                        color: '#09090b',
+                      }}
+                    >
+                      {pin.artist.slice(0, 2).toUpperCase()}
+                    </span>
+                  )}
                 </div>
 
                 <div
@@ -2953,7 +2854,7 @@ export default function VerseMapPage() {
               {selectedPin.releaseYear ? ` (${selectedPin.releaseYear})` : ''}
             </div>
 
-            {selectedPin.category !== 'LYRIC_MENTION' && pinVisualUrl && (
+            {selectedPin.image_url && !brokenImageIds[String(selectedPin.id)] && (
               <div
                 style={{
                   marginBottom: 18,
@@ -2964,8 +2865,15 @@ export default function VerseMapPage() {
                 }}
               >
                 <img
-                  src={pinVisualUrl}
+                  src={selectedPin.image_url.replace('100x100bb', '600x600bb')}
                   alt={selectedPin.title}
+                  onError={function () {
+                    setBrokenImageIds(function (prev) {
+                      const next = { ...prev };
+                      next[String(selectedPin.id)] = true;
+                      return next;
+                    });
+                  }}
                   style={{
                     width: '100%',
                     height: selectedPin.category === 'ALBUM_COVER' ? 240 : 185,
@@ -2988,7 +2896,9 @@ export default function VerseMapPage() {
                       ? '📸 Official Album Cover Sleeve'
                       : selectedPin.category === 'TRIBUTE_MURAL'
                       ? '🎨 Tribute & Landmark Photo'
-                      : '🏛️ Historic Venue & Site Photo'}
+                      : selectedPin.category === 'HISTORIC_VENUE'
+                      ? '🏛️ Historic Venue & Site Photo'
+                      : '🎵 Associated Album & Era Artwork'}
                   </span>
                   <span>{selectedPin.artist}</span>
                 </div>
@@ -3102,27 +3012,23 @@ export default function VerseMapPage() {
                   🎵 30s Hook Preview
                 </span>
                 <span style={{ fontSize: 10, color: '#34d399', fontWeight: 600 }}>
-                  {audioLoading
-                    ? 'Matching track...'
-                    : audioUrl
-                    ? '✓ Verified Artist & Track'
-                    : 'Use Full Track Link Below'}
+                  {audioUrl ? '✓ Backend Audio Ready' : 'Use Full Track Link Below'}
                 </span>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <button
                   onClick={handleToggleAudio}
-                  disabled={audioLoading || !audioUrl}
+                  disabled={!audioUrl}
                   style={{
                     width: 40,
                     height: 40,
                     borderRadius: '50%',
                     border: 'none',
-                    backgroundColor: audioLoading || !audioUrl ? '#27272a' : '#f59e0b',
-                    color: audioLoading || !audioUrl ? '#71717a' : '#09090b',
+                    backgroundColor: !audioUrl ? '#27272a' : '#f59e0b',
+                    color: !audioUrl ? '#71717a' : '#09090b',
                     fontWeight: 800,
-                    cursor: audioLoading || !audioUrl ? 'not-allowed' : 'pointer',
+                    cursor: !audioUrl ? 'not-allowed' : 'pointer',
                     fontSize: 14,
                     display: 'flex',
                     alignItems: 'center',
@@ -3130,12 +3036,12 @@ export default function VerseMapPage() {
                     flexShrink: 0,
                   }}
                 >
-                  {audioLoading ? '•••' : isPlayingPreview ? '❚❚' : '▶'}
+                  {isPlayingPreview ? '❚❚' : '▶'}
                 </button>
 
-                {audioArtwork && (
+                {selectedPin.image_url && !brokenImageIds[String(selectedPin.id)] && (
                   <img
-                    src={audioArtwork}
+                    src={selectedPin.image_url}
                     alt="Album Art"
                     style={{
                       width: 38,
@@ -3159,7 +3065,7 @@ export default function VerseMapPage() {
                       textOverflow: 'ellipsis',
                     }}
                   >
-                    {audioLoading ? 'Loading track...' : audioTrackName}
+                    {audioTrackName}
                   </div>
                   <div
                     style={{

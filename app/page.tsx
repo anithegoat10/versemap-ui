@@ -174,8 +174,7 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1965,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: 'Upper Byrdcliffe Rd, Woodstock, NY',
-    image_url:
-      'https://upload.wikimedia.org/wikipedia/en/b/b1/Bob_Dylan_-_Bringing_It_All_Back_Home.jpg',
+    image_url: null,
     audio_preview_url: null,
     wikiSlug: 'Bringing_It_All_Back_Home',
   },
@@ -195,8 +194,7 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1965,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: '4 Gramercy Park West, New York, NY',
-    image_url:
-      'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
+    image_url: null,
     audio_preview_url: null,
     wikiSlug: 'Highway_61_Revisited',
   },
@@ -216,8 +214,7 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1966,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: 'W 14th St & 9th Ave, New York, NY',
-    image_url:
-      'https://upload.wikimedia.org/wikipedia/en/3/38/Bob_Dylan_-_Blonde_on_Blonde.jpg',
+    image_url: null,
     audio_preview_url: null,
     wikiSlug: 'Blonde_on_Blonde',
   },
@@ -237,8 +234,7 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1967,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: 'Woodstock, NY',
-    image_url:
-      'https://upload.wikimedia.org/wikipedia/en/e/e8/Bob_Dylan_-_John_Wesley_Harding.jpg',
+    image_url: null,
     audio_preview_url: null,
     wikiSlug: 'John_Wesley_Harding',
   },
@@ -258,8 +254,7 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1969,
     sceneTags: [],
     rawQuery: '34 Music Square E, Nashville, TN',
-    image_url:
-      'https://upload.wikimedia.org/wikipedia/en/5/5c/Bob_Dylan_-_Nashville_Skyline.jpg',
+    image_url: null,
     audio_preview_url: null,
     wikiSlug: 'Nashville_Skyline',
   },
@@ -279,8 +274,7 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1975,
     sceneTags: [],
     rawQuery: 'Ashtabula, OH',
-    image_url:
-      'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
+    image_url: null,
     audio_preview_url: null,
   },
   {
@@ -299,8 +293,7 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1967,
     sceneTags: ['SWINGING_LONDON'],
     rawQuery: 'Bishopsgate, London, UK',
-    image_url:
-      'https://upload.wikimedia.org/wikipedia/en/5/50/Sgt._Pepper%27s_Lonely_Hearts_Club_Band.jpg',
+    image_url: null,
     audio_preview_url: null,
   },
 ];
@@ -565,8 +558,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 14,
       previewSeekSeconds: 0,
       wikiSlug: "Giant's_Causeway",
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/9/9f/Led_Zeppelin_-_Houses_of_the_Holy.jpg',
     };
   }
 
@@ -580,7 +571,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       previewSeekSeconds: 0,
       wikiSlug: 'Bob_Dylan_mural',
       defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/4/4b/Bob_Dylan_Mural_by_Eduardo_Kobra.jpg',
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Bob_Dylan_Mural_by_Eduardo_Kobra.jpg/600px-Bob_Dylan_Mural_by_Eduardo_Kobra.jpg',
     };
   }
 
@@ -634,8 +625,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '1:45 (Honolulu, San Francisco & Ashtabula Verse)',
       exactVerseSeconds: 105,
       previewSeekSeconds: 4,
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
     };
   }
 
@@ -648,8 +637,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 51,
       previewSeekSeconds: 8,
       wikiSlug: "Standin'_on_the_Corner_Park",
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/0/00/Eagles_-_Eagles.jpg',
     };
   }
 
@@ -662,8 +649,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 68,
       previewSeekSeconds: 6,
       wikiSlug: 'Paramount_Ranch',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/e/e6/Eagles_-_Desperado.jpg',
     };
   }
 
@@ -676,8 +661,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 53,
       previewSeekSeconds: 4,
       wikiSlug: 'The_Beverly_Hills_Hotel',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/4/49/Hotelcalifornia.jpg',
     };
   }
 
@@ -689,8 +672,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 2,
       previewSeekSeconds: 0,
       wikiSlug: '3_Savile_Row',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/2/25/LetItBe.jpg',
     };
   }
 
@@ -703,8 +684,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
         exactVerseSeconds: 45,
         previewSeekSeconds: 4,
         wikiSlug: 'Royal_Albert_Hall',
-        defaultImageUrl:
-          'https://upload.wikimedia.org/wikipedia/en/e/ef/Led_Zeppelin_-_Led_Zeppelin_%281969%29_front_cover.png',
       };
     }
     return {
@@ -715,8 +694,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 198,
       previewSeekSeconds: 5,
       wikiSlug: 'Royal_Albert_Hall',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/5/50/Sgt._Pepper%27s_Lonely_Hearts_Club_Band.jpg',
     };
   }
 
@@ -729,8 +706,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 65,
       previewSeekSeconds: 12,
       wikiSlug: 'Grantchester_Meadows',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/1/12/PinkFloyd-album-ummagumma.jpg',
     };
   }
 
@@ -743,8 +718,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 62,
       previewSeekSeconds: 5,
       wikiSlug: 'Battersea_Power_Station',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/7/74/Pink_Floyd-Animals-Frontal.jpg',
     };
   }
 
@@ -758,8 +731,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
         exactVerseSeconds: 138,
         previewSeekSeconds: 6,
         wikiSlug: 'Abbey_Road_Studios',
-        defaultImageUrl:
-          'https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png',
       };
     }
     return {
@@ -770,8 +741,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 14,
       previewSeekSeconds: 0,
       wikiSlug: 'Abbey_Road',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/4/42/Beatles_-_Abbey_Road.jpg',
     };
   }
 
@@ -784,8 +753,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 95,
       previewSeekSeconds: 5,
       wikiSlug: 'Britannia_Row_Studios',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/7/74/Pink_Floyd-Animals-Frontal.jpg',
     };
   }
 
@@ -798,8 +765,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 18,
       previewSeekSeconds: 3,
       wikiSlug: 'Bron-Yr-Aur',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/5/5f/Led_Zeppelin_-_Led_Zeppelin_III.png',
     };
   }
 
@@ -812,8 +777,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 0,
       previewSeekSeconds: 0,
       wikiSlug: 'Headley_Grange',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/2/26/Led_Zeppelin_-_Led_Zeppelin_IV.jpg',
     };
   }
 
@@ -826,8 +789,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 0,
       previewSeekSeconds: 0,
       wikiSlug: 'Physical_Graffiti',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/e/e3/Led_Zeppelin_-_Physical_Graffiti.jpg',
     };
   }
 
@@ -839,8 +800,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '1:58 (Delacroix Fishing Boat Verse)',
       exactVerseSeconds: 118,
       previewSeekSeconds: 4,
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
     };
   }
 
@@ -852,8 +811,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '2:56 (Montague Street Basement Verse)',
       exactVerseSeconds: 176,
       previewSeekSeconds: 4,
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
     };
   }
 
@@ -866,8 +823,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 42,
       previewSeekSeconds: 2,
       wikiSlug: 'Dealey_Plaza',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/5/51/Bob_Dylan_-_Rough_and_Rowdy_Ways.png',
     };
   }
 
@@ -880,8 +835,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 65,
       previewSeekSeconds: 5,
       wikiSlug: 'Columbia_Records',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
     };
   }
 
@@ -894,8 +847,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 8,
       previewSeekSeconds: 0,
       wikiSlug: "The_Freewheelin'_Bob_Dylan",
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/d/d6/Bob_Dylan_-_The_Freewheelin%27_Bob_Dylan.jpg',
     };
   }
   if (/bringing it all back home|byrdcliffe/i.test(text)) {
@@ -907,8 +858,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 6,
       previewSeekSeconds: 0,
       wikiSlug: 'Bringing_It_All_Back_Home',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/b/b1/Bob_Dylan_-_Bringing_It_All_Back_Home.jpg',
     };
   }
   if (/highway 61|gramercy/i.test(text)) {
@@ -920,8 +869,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 12,
       previewSeekSeconds: 2,
       wikiSlug: 'Highway_61_Revisited',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
     };
   }
   if (/blonde on blonde|14th st/i.test(text)) {
@@ -933,8 +880,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 18,
       previewSeekSeconds: 2,
       wikiSlug: 'Blonde_on_Blonde',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/3/38/Bob_Dylan_-_Blonde_on_Blonde.jpg',
     };
   }
   if (/john wesley harding/i.test(text)) {
@@ -946,8 +891,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 15,
       previewSeekSeconds: 0,
       wikiSlug: 'John_Wesley_Harding',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/e/e8/Bob_Dylan_-_John_Wesley_Harding.jpg',
     };
   }
   if (/nashville skyline|music square/i.test(text)) {
@@ -959,8 +902,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 16,
       previewSeekSeconds: 0,
       wikiSlug: 'Nashville_Skyline',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/5/5c/Bob_Dylan_-_Nashville_Skyline.jpg',
     };
   }
 
@@ -973,8 +914,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 15,
       previewSeekSeconds: 0,
       wikiSlug: 'MacDougal_Street',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/3/38/Bob_Dylan_-_Bob_Dylan.jpg',
     };
   }
   if (/chelsea hotel|hotel chelsea/i.test(text)) {
@@ -986,8 +925,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 215,
       previewSeekSeconds: 4,
       wikiSlug: 'Hotel_Chelsea',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/0/0e/Bob_Dylan_-_Desire.jpg',
     };
   }
   if (/gerde|folk city/i.test(text)) {
@@ -999,8 +936,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 8,
       previewSeekSeconds: 0,
       wikiSlug: 'MacDougal_Street',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/d/d6/Bob_Dylan_-_The_Freewheelin%27_Bob_Dylan.jpg',
     };
   }
   if (/penny lane/i.test(text)) {
@@ -1011,8 +946,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 4,
       previewSeekSeconds: 0,
       wikiSlug: 'Penny_Lane',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/e/e8/MagicalMysteryTourDoubleEPcover.jpg',
     };
   }
   if (/strawberry field/i.test(text)) {
@@ -1023,8 +956,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 12,
       previewSeekSeconds: 0,
       wikiSlug: 'Strawberry_Field',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/e/e8/MagicalMysteryTourDoubleEPcover.jpg',
     };
   }
   if (/cavern club/i.test(text)) {
@@ -1035,8 +966,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 3,
       previewSeekSeconds: 0,
       wikiSlug: 'The_Cavern_Club',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/c/c0/PleasePleaseMe_audio_cover.jpg',
     };
   }
   if (/bishopsgate|mr\.?\s*kite/i.test(text)) {
@@ -1046,8 +975,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '0:22 (Bishopsgate Verse)',
       exactVerseSeconds: 22,
       previewSeekSeconds: 0,
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/5/50/Sgt._Pepper%27s_Lonely_Hearts_Club_Band.jpg',
     };
   }
   if (/troubadour/i.test(text)) {
@@ -1058,8 +985,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 18,
       previewSeekSeconds: 3,
       wikiSlug: 'Troubadour_(West_Hollywood,_California)',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/0/00/Eagles_-_Eagles.jpg',
     };
   }
   if (/ufo club|roundhouse/i.test(text)) {
@@ -1070,8 +995,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 28,
       previewSeekSeconds: 4,
       wikiSlug: 'Roundhouse_(venue)',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/3/3c/PinkFloyd-album-piperatthegatesofdawn_300.jpg',
     };
   }
   if (/warner bros|wish you were here/i.test(text)) {
@@ -1083,8 +1006,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 78,
       previewSeekSeconds: 5,
       wikiSlug: 'Wish_You_Were_Here_(Pink_Floyd_album)',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/a/a4/Pink_Floyd%2C_Wish_You_Were_Here_%281975%29.png',
     };
   }
 
@@ -1096,8 +1017,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 65,
       previewSeekSeconds: 4,
       wikiSlug: 'Bob_Dylan',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
     };
   }
   if (artistLower.includes('zeppelin')) {
@@ -1108,8 +1027,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 2,
       previewSeekSeconds: 0,
       wikiSlug: 'Led_Zeppelin',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/2/26/Led_Zeppelin_-_Led_Zeppelin_IV.jpg',
     };
   }
   if (artistLower.includes('beatles')) {
@@ -1120,8 +1037,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 10,
       previewSeekSeconds: 0,
       wikiSlug: 'The_Beatles',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/7/74/Rubber_Soul.jpg',
     };
   }
   if (artistLower.includes('eagles')) {
@@ -1132,8 +1047,6 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 13,
       previewSeekSeconds: 4,
       wikiSlug: 'Eagles_(band)',
-      defaultImageUrl:
-        'https://upload.wikimedia.org/wikipedia/en/4/49/Hotelcalifornia.jpg',
     };
   }
   return {
@@ -1143,12 +1056,9 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
     exactVerseSeconds: 78,
     previewSeekSeconds: 5,
     wikiSlug: 'Pink_Floyd',
-    defaultImageUrl:
-      'https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png',
   };
 }
 
-// Shared Row Normalizer used by both initial Supabase load and Realtime INSERT listener
 function normalizeDatabaseRow(row: any, fallbackIdx: number): NormalizedPin {
   const lat = Number(row.lat ?? row.latitude);
   const lng = Number(row.lng ?? row.longitude);
@@ -1266,6 +1176,7 @@ export default function VerseMapPage() {
   const [brokenImageIds, setBrokenImageIds] = useState({} as Record<string, boolean>);
 
   const [selectedPin, setSelectedPin] = useState(null as NormalizedPin | null);
+  const [audioLoading, setAudioLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null as string | null);
   const [audioTrackName, setAudioTrackName] = useState('');
   const [isPlayingPreview, setIsPlayingPreview] = useState(false);
@@ -1308,7 +1219,6 @@ export default function VerseMapPage() {
     }
   };
 
-  // Initial Supabase Fetch
   useEffect(function () {
     async function fetchPins() {
       setLoading(true);
@@ -1373,7 +1283,6 @@ export default function VerseMapPage() {
     fetchPins();
   }, []);
 
-  // Step 4.3: Real-Time Supabase INSERT Subscription
   useEffect(function () {
     const channel = supabase
       .channel('custom-all-channel')
@@ -1407,7 +1316,7 @@ export default function VerseMapPage() {
     };
   }, []);
 
-  // Step 4.3 Cleanup: Sync audio state directly from backend-populated pin properties (no client API calls)
+  // SELF-HEALING FALLBACK: If Supabase missed the image/audio, or it's a hardcoded pin, fetch via iTunes on the fly.
   useEffect(
     function () {
       if (audioRef.current) {
@@ -1422,12 +1331,138 @@ export default function VerseMapPage() {
       if (!selectedPin) {
         setAudioUrl(null);
         setAudioTrackName('');
+        setAudioLoading(false);
         return;
       }
 
       const target = resolvePinTrack(selectedPin);
       setAudioTrackName(`${target.song} • ${target.artist}`);
-      setAudioUrl(selectedPin.audio_preview_url || null);
+      
+      const pinIdKey = String(selectedPin.id);
+      const isImageBroken = brokenImageIds[pinIdKey];
+      const needsImage = !selectedPin.image_url || isImageBroken;
+      const needsAudio = !selectedPin.audio_preview_url;
+
+      if (!needsImage && !needsAudio) {
+        setAudioUrl(selectedPin.audio_preview_url);
+        setAudioLoading(false);
+        return;
+      }
+
+      let isCancelled = false;
+      setAudioLoading(true);
+
+      async function fetchFallbackMedia() {
+        const cleanArtistToken = target.artist
+          .toLowerCase()
+          .replace(/^the\s+/i, '')
+          .trim();
+        const coreSongToken = target.song
+          .toLowerCase()
+          .replace(/\([^)]*\)/g, '')
+          .replace(/[^a-z0-9\s]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        const queries = [
+          `${target.artist} ${target.song}`,
+          `${target.artist} ${coreSongToken}`,
+          target.artist,
+        ];
+
+        for (const query of queries) {
+          try {
+            const url = `https://itunes.apple.com/search?term=${encodeURIComponent(
+              query
+            )}&media=music&entity=song&limit=25`;
+            const res = await fetch(url);
+            if (!res.ok) continue;
+
+            const json = await res.json();
+            const results: any[] = (json.results || []).filter(function (r: any) {
+              return Boolean(r.previewUrl);
+            });
+
+            const scored = results
+              .map(function (item: any) {
+                const itemArtist = String(item.artistName || '').toLowerCase();
+                const itemTrackRaw = String(item.trackName || '').toLowerCase();
+                const itemTrackCore = itemTrackRaw
+                  .replace(/\([^)]*\)/g, '')
+                  .replace(/[^a-z0-9\s]/g, ' ')
+                  .replace(/\s+/g, ' ')
+                  .trim();
+                const itemCollection = String(item.collectionName || '').toLowerCase();
+
+                let score = 0;
+                if (itemArtist.includes(cleanArtistToken)) score += 120;
+                else score -= 300;
+
+                if (/karaoke|tribute|lullaby|8-bit|made famous|in the style/i.test(`${itemArtist} ${itemTrackRaw} ${itemCollection}`)) {
+                  score -= 400;
+                }
+
+                if (itemTrackCore === coreSongToken) score += 100;
+                else if (itemTrackCore.includes(coreSongToken) || coreSongToken.includes(itemTrackCore)) score += 70;
+
+                if (target.album) {
+                  const targetAlbumClean = target.album.toLowerCase().replace(/[^a-z0-9]/g, '');
+                  const itemAlbumClean = itemCollection.replace(/[^a-z0-9]/g, '');
+                  if (itemAlbumClean.includes(targetAlbumClean)) score += 300;
+                  else score -= 100;
+                }
+
+                return { item, score };
+              })
+              .filter(function (entry) {
+                return 100 <= entry.score;
+              })
+              .sort(function (a, b) {
+                return b.score - a.score;
+              });
+
+            if (!isCancelled && 0 < scored.length) {
+              const best = scored[0].item;
+              const thumb = best.artworkUrl100 || best.artworkUrl60 || null;
+              const hiResCover = thumb ? thumb.replace('100x100bb', '600x600bb') : null;
+
+              setAudioUrl(best.previewUrl);
+              setAudioLoading(false);
+              
+              setPins(function(prevPins) {
+                return prevPins.map(function(p) {
+                  if (String(p.id) === pinIdKey) {
+                    return {
+                      ...p,
+                      image_url: needsImage ? hiResCover : p.image_url,
+                      audio_preview_url: needsAudio ? best.previewUrl : p.audio_preview_url
+                    };
+                  }
+                  return p;
+                });
+              });
+
+              if (needsImage) {
+                setBrokenImageIds(function(prev) {
+                  const next = { ...prev };
+                  delete next[pinIdKey];
+                  return next;
+                });
+              }
+              return;
+            }
+          } catch (e) {
+            // Next query
+          }
+        }
+        if (!isCancelled) setAudioLoading(false);
+      }
+
+      fetchFallbackMedia();
+
+      return function () {
+        isCancelled = true;
+      };
     },
     [selectedPin]
   );
@@ -2000,7 +2035,6 @@ export default function VerseMapPage() {
         fontFamily: 'system-ui, -apple-system, sans-serif',
       }}
     >
-      {/* TOP FILTER & CITY SEARCH BAR */}
       <div
         style={{
           position: 'absolute',
@@ -2173,7 +2207,6 @@ export default function VerseMapPage() {
         </div>
       </div>
 
-      {/* LEFT-ALIGNED DOCK: ERA TIME-MACHINE + FLOATING TOUR BUS CART */}
       <div
         style={{
           position: 'absolute',
@@ -2546,7 +2579,6 @@ export default function VerseMapPage() {
         </div>
       )}
 
-      {/* HYBRID MAPBOX CANVAS: WebGL Cluster Bubbles + Circular Image HTML Markers */}
       <MapboxMap
         ref={mapRef}
         initialViewState={INITIAL_MAP_VIEW}
@@ -2603,7 +2635,6 @@ export default function VerseMapPage() {
           />
         </Source>
 
-        {/* Step 4.3: Circular Image Markers with Category-Colored Borders & Glowing Shadows */}
         {visibleHtmlPins.map(function (pin) {
           const pinColor = getCategoryColor(pin.category);
           const pinIdKey = String(pin.id);
@@ -3012,23 +3043,27 @@ export default function VerseMapPage() {
                   🎵 30s Hook Preview
                 </span>
                 <span style={{ fontSize: 10, color: '#34d399', fontWeight: 600 }}>
-                  {audioUrl ? '✓ Backend Audio Ready' : 'Use Full Track Link Below'}
+                  {audioLoading
+                    ? 'Loading...'
+                    : audioUrl
+                    ? '✓ Audio Ready'
+                    : 'Use Full Track Link Below'}
                 </span>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <button
                   onClick={handleToggleAudio}
-                  disabled={!audioUrl}
+                  disabled={audioLoading || !audioUrl}
                   style={{
                     width: 40,
                     height: 40,
                     borderRadius: '50%',
                     border: 'none',
-                    backgroundColor: !audioUrl ? '#27272a' : '#f59e0b',
-                    color: !audioUrl ? '#71717a' : '#09090b',
+                    backgroundColor: audioLoading || !audioUrl ? '#27272a' : '#f59e0b',
+                    color: audioLoading || !audioUrl ? '#71717a' : '#09090b',
                     fontWeight: 800,
-                    cursor: !audioUrl ? 'not-allowed' : 'pointer',
+                    cursor: audioLoading || !audioUrl ? 'not-allowed' : 'pointer',
                     fontSize: 14,
                     display: 'flex',
                     alignItems: 'center',
@@ -3036,7 +3071,7 @@ export default function VerseMapPage() {
                     flexShrink: 0,
                   }}
                 >
-                  {isPlayingPreview ? '❚❚' : '▶'}
+                  {audioLoading ? '•••' : isPlayingPreview ? '❚❚' : '▶'}
                 </button>
 
                 {selectedPin.image_url && !brokenImageIds[String(selectedPin.id)] && (
@@ -3065,7 +3100,7 @@ export default function VerseMapPage() {
                       textOverflow: 'ellipsis',
                     }}
                   >
-                    {audioTrackName}
+                    {audioLoading ? 'Locating track...' : audioTrackName}
                   </div>
                   <div
                     style={{

@@ -558,7 +558,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '0:08 (Opening Chorus Refrain)',
       exactVerseSeconds: 8,
       previewSeekSeconds: 0,
-      wikiSlug: 'MacDougal_Street',
+      wikiSlug: 'The_Bitter_End',
     };
   }
 

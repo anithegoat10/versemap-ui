@@ -74,7 +74,6 @@ const ROUTE_DASH_PAINT: any = {
   'line-dasharray': [2, 2],
 };
 
-// Phase 4 Supercluster Layer Configurations
 const INTERACTIVE_LAYER_IDS = ['clusters', 'unclustered-point'];
 
 const CLUSTER_FILTER: any = ['has', 'point_count'];
@@ -1503,7 +1502,6 @@ export default function VerseMapPage() {
     [pins, selectedArtist, selectedCategory, selectedEra, placeSearch]
   );
 
-  // Spiderfy overlapping pins so close neighbors remain distinct when zoomed past cluster threshold
   const spiderfiedPins: NormalizedPin[] = useMemo(
     function () {
       const threshold = 0.00055;
@@ -1541,7 +1539,6 @@ export default function VerseMapPage() {
     [filteredPins]
   );
 
-  // Phase 4: Memoize filtered & spiderfied pins into a GeoJSON FeatureCollection for Mapbox Supercluster
   const pinsGeoJson: any = useMemo(
     function () {
       const features = spiderfiedPins.map(function (pin) {
@@ -1574,7 +1571,6 @@ export default function VerseMapPage() {
     [spiderfiedPins, selectedPin]
   );
 
-  // Fly camera to frame current filtered search results when user submits city/region query
   const handleFlyToPlaceResults = function () {
     if (!mapRef.current || filteredPins.length === 0) return;
 
@@ -1696,7 +1692,7 @@ export default function VerseMapPage() {
     }
   };
 
-  const routeGeoJson: GeoJSON.FeatureCollection<GeoJSON,LineString> | null = useMemo(
+  const routeGeoJson: GeoJSON.FeatureCollection<GeoJSON.LineString> | null = useMemo(
     function () {
       if (!isRouteOptimized || tourStops.length < 2) {
         return null;
@@ -1712,12 +1708,17 @@ export default function VerseMapPage() {
       });
 
       return {
-        type: 'Feature',
-        properties: {},
-        geometry: {
-          type: 'LineString',
-          coordinates: coordinates,
-        },
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: coordinates,
+            },
+          },
+        ],
       };
     },
     [isRouteOptimized, tourStops, spiderfiedPins]
@@ -1777,7 +1778,6 @@ export default function VerseMapPage() {
     }
   };
 
-  // Phase 4: Query Rendered Features on Map Click (Expand Clusters or Open Unclustered Pin Drawer)
   const handleMapClick = function (e: any) {
     if (!mapRef.current) {
       setSelectedPin(null);
@@ -1793,7 +1793,7 @@ export default function VerseMapPage() {
       return;
     }
 
-    const topFeature = renderedFeatures[0];
+    const topFeature: any = renderedFeatures[0];
     const layerId = topFeature.layer ? topFeature.layer.id : '';
 
     if (layerId === 'clusters') {
@@ -1898,7 +1898,6 @@ export default function VerseMapPage() {
         fontFamily: 'system-ui, -apple-system, sans-serif',
       }}
     >
-      {/* TOP FILTER & CITY SEARCH BAR */}
       <div
         style={{
           position: 'absolute',
@@ -1937,7 +1936,6 @@ export default function VerseMapPage() {
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
-          {/* Phase 4: City / Region Search Input */}
           <div
             style={{
               display: 'flex',
@@ -2072,7 +2070,6 @@ export default function VerseMapPage() {
         </div>
       </div>
 
-      {/* LEFT-ALIGNED DOCK: ERA TIME-MACHINE + FLOATING TOUR BUS CART UNDERNEATH */}
       <div
         style={{
           position: 'absolute',
@@ -2087,7 +2084,6 @@ export default function VerseMapPage() {
           pointerEvents: 'none',
         }}
       >
-        {/* Era Time-Machine Bar */}
         <div
           style={{
             pointerEvents: 'auto',
@@ -2144,7 +2140,6 @@ export default function VerseMapPage() {
           })}
         </div>
 
-        {/* Floating Tour Bus Cart & Route Optimizer Tray */}
         <div
           style={{
             pointerEvents: 'auto',
@@ -2447,7 +2442,6 @@ export default function VerseMapPage() {
         </div>
       )}
 
-      {/* FULLSCREEN MAPBOX CANVAS WITH GEOJSON SUPERCLUSTER + TOUR BUS MARKERS */}
       <MapboxMap
         ref={mapRef}
         initialViewState={INITIAL_MAP_VIEW}
@@ -2461,7 +2455,6 @@ export default function VerseMapPage() {
       >
         <NavigationControl position="bottom-right" />
 
-        {/* Phase 3.3a: Glowing Dashed Route Line */}
         {routeGeoJson && (
           <Source id="tour-bus-route" type="geojson" data={routeGeoJson}>
             <Layer
@@ -2479,7 +2472,6 @@ export default function VerseMapPage() {
           </Source>
         )}
 
-        {/* Phase 4: Native Mapbox Supercluster Source & Layers (Scales to 10,000+ Pins) */}
         <Source
           id="pins"
           type="geojson"
@@ -2515,7 +2507,6 @@ export default function VerseMapPage() {
           />
         </Source>
 
-        {/* Preserve Numbered Tour Bus Stop Markers Above All Cluster Layers */}
         {tourStops.map(function (stop, stopIdx) {
           const spiderMatch = spiderfiedPins.find(function (sp) {
             return String(sp.id) === String(stop.id);
@@ -2605,7 +2596,6 @@ export default function VerseMapPage() {
         })}
       </MapboxMap>
 
-      {/* Responsive Pin Drawer (Right Sidebar on Desktop, 60% Bottom-Sheet on Mobile) */}
       {selectedPin && (
         <aside
           style={{

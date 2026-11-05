@@ -174,7 +174,8 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1965,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: 'Upper Byrdcliffe Rd, Woodstock, NY',
-    image_url: null,
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/b/b1/Bob_Dylan_-_Bringing_It_All_Back_Home.jpg',
     audio_preview_url: null,
     wikiSlug: 'Bringing_It_All_Back_Home',
   },
@@ -194,7 +195,8 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1965,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: '4 Gramercy Park West, New York, NY',
-    image_url: null,
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
     audio_preview_url: null,
     wikiSlug: 'Highway_61_Revisited',
   },
@@ -214,7 +216,8 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1966,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: 'W 14th St & 9th Ave, New York, NY',
-    image_url: null,
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/3/38/Bob_Dylan_-_Blonde_on_Blonde.jpg',
     audio_preview_url: null,
     wikiSlug: 'Blonde_on_Blonde',
   },
@@ -234,7 +237,8 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1967,
     sceneTags: ['GREENWICH_VILLAGE'],
     rawQuery: 'Woodstock, NY',
-    image_url: null,
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/e/e8/Bob_Dylan_-_John_Wesley_Harding.jpg',
     audio_preview_url: null,
     wikiSlug: 'John_Wesley_Harding',
   },
@@ -254,7 +258,8 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1969,
     sceneTags: [],
     rawQuery: '34 Music Square E, Nashville, TN',
-    image_url: null,
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/5/5c/Bob_Dylan_-_Nashville_Skyline.jpg',
     audio_preview_url: null,
     wikiSlug: 'Nashville_Skyline',
   },
@@ -274,7 +279,8 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1975,
     sceneTags: [],
     rawQuery: 'Ashtabula, OH',
-    image_url: null,
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
     audio_preview_url: null,
   },
   {
@@ -293,7 +299,8 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
     releaseYear: 1967,
     sceneTags: ['SWINGING_LONDON'],
     rawQuery: 'Bishopsgate, London, UK',
-    image_url: null,
+    image_url:
+      'https://upload.wikimedia.org/wikipedia/en/5/50/Sgt._Pepper%27s_Lonely_Hearts_Club_Band.jpg',
     audio_preview_url: null,
   },
 ];
@@ -558,6 +565,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 14,
       previewSeekSeconds: 0,
       wikiSlug: "Giant's_Causeway",
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/9/9f/Led_Zeppelin_-_Houses_of_the_Holy.jpg',
     };
   }
 
@@ -625,6 +633,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '1:45 (Honolulu, San Francisco & Ashtabula Verse)',
       exactVerseSeconds: 105,
       previewSeekSeconds: 4,
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
     };
   }
 
@@ -637,6 +646,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 51,
       previewSeekSeconds: 8,
       wikiSlug: "Standin'_on_the_Corner_Park",
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/0/00/Eagles_-_Eagles.jpg',
     };
   }
 
@@ -649,6 +659,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 68,
       previewSeekSeconds: 6,
       wikiSlug: 'Paramount_Ranch',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/e/e6/Eagles_-_Desperado.jpg',
     };
   }
 
@@ -661,6 +672,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 53,
       previewSeekSeconds: 4,
       wikiSlug: 'The_Beverly_Hills_Hotel',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/4/49/Hotelcalifornia.jpg',
     };
   }
 
@@ -672,6 +684,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 2,
       previewSeekSeconds: 0,
       wikiSlug: '3_Savile_Row',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/2/25/LetItBe.jpg',
     };
   }
 
@@ -684,6 +697,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
         exactVerseSeconds: 45,
         previewSeekSeconds: 4,
         wikiSlug: 'Royal_Albert_Hall',
+        defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/e/ef/Led_Zeppelin_-_Led_Zeppelin_%281969%29_front_cover.png',
       };
     }
     return {
@@ -694,6 +708,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 198,
       previewSeekSeconds: 5,
       wikiSlug: 'Royal_Albert_Hall',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/5/50/Sgt._Pepper%27s_Lonely_Hearts_Club_Band.jpg',
     };
   }
 
@@ -706,6 +721,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 65,
       previewSeekSeconds: 12,
       wikiSlug: 'Grantchester_Meadows',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/1/12/PinkFloyd-album-ummagumma.jpg',
     };
   }
 
@@ -718,6 +734,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 62,
       previewSeekSeconds: 5,
       wikiSlug: 'Battersea_Power_Station',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/7/74/Pink_Floyd-Animals-Frontal.jpg',
     };
   }
 
@@ -731,6 +748,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
         exactVerseSeconds: 138,
         previewSeekSeconds: 6,
         wikiSlug: 'Abbey_Road_Studios',
+        defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png',
       };
     }
     return {
@@ -741,6 +759,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 14,
       previewSeekSeconds: 0,
       wikiSlug: 'Abbey_Road',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/4/42/Beatles_-_Abbey_Road.jpg',
     };
   }
 
@@ -753,6 +772,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 95,
       previewSeekSeconds: 5,
       wikiSlug: 'Britannia_Row_Studios',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/7/74/Pink_Floyd-Animals-Frontal.jpg',
     };
   }
 
@@ -765,6 +785,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 18,
       previewSeekSeconds: 3,
       wikiSlug: 'Bron-Yr-Aur',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/5/5f/Led_Zeppelin_-_Led_Zeppelin_III.png',
     };
   }
 
@@ -777,6 +798,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 0,
       previewSeekSeconds: 0,
       wikiSlug: 'Headley_Grange',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/2/26/Led_Zeppelin_-_Led_Zeppelin_IV.jpg',
     };
   }
 
@@ -789,6 +811,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 0,
       previewSeekSeconds: 0,
       wikiSlug: 'Physical_Graffiti',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/e/e3/Led_Zeppelin_-_Physical_Graffiti.jpg',
     };
   }
 
@@ -800,6 +823,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '1:58 (Delacroix Fishing Boat Verse)',
       exactVerseSeconds: 118,
       previewSeekSeconds: 4,
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
     };
   }
 
@@ -811,6 +835,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '2:56 (Montague Street Basement Verse)',
       exactVerseSeconds: 176,
       previewSeekSeconds: 4,
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/f/fa/Bob_Dylan_-_Blood_on_the_Tracks.jpg',
     };
   }
 
@@ -823,6 +848,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 42,
       previewSeekSeconds: 2,
       wikiSlug: 'Dealey_Plaza',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/5/51/Bob_Dylan_-_Rough_and_Rowdy_Ways.png',
     };
   }
 
@@ -835,6 +861,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 65,
       previewSeekSeconds: 5,
       wikiSlug: 'Columbia_Records',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
     };
   }
 
@@ -847,6 +874,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 8,
       previewSeekSeconds: 0,
       wikiSlug: "The_Freewheelin'_Bob_Dylan",
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/d/d6/Bob_Dylan_-_The_Freewheelin%27_Bob_Dylan.jpg',
     };
   }
   if (/bringing it all back home|byrdcliffe/i.test(text)) {
@@ -858,6 +886,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 6,
       previewSeekSeconds: 0,
       wikiSlug: 'Bringing_It_All_Back_Home',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/b/b1/Bob_Dylan_-_Bringing_It_All_Back_Home.jpg',
     };
   }
   if (/highway 61|gramercy/i.test(text)) {
@@ -869,6 +898,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 12,
       previewSeekSeconds: 2,
       wikiSlug: 'Highway_61_Revisited',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
     };
   }
   if (/blonde on blonde|14th st/i.test(text)) {
@@ -880,6 +910,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 18,
       previewSeekSeconds: 2,
       wikiSlug: 'Blonde_on_Blonde',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/3/38/Bob_Dylan_-_Blonde_on_Blonde.jpg',
     };
   }
   if (/john wesley harding/i.test(text)) {
@@ -891,6 +922,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 15,
       previewSeekSeconds: 0,
       wikiSlug: 'John_Wesley_Harding',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/e/e8/Bob_Dylan_-_John_Wesley_Harding.jpg',
     };
   }
   if (/nashville skyline|music square/i.test(text)) {
@@ -902,6 +934,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 16,
       previewSeekSeconds: 0,
       wikiSlug: 'Nashville_Skyline',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/5/5c/Bob_Dylan_-_Nashville_Skyline.jpg',
     };
   }
 
@@ -914,6 +947,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 15,
       previewSeekSeconds: 0,
       wikiSlug: 'MacDougal_Street',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/3/38/Bob_Dylan_-_Bob_Dylan.jpg',
     };
   }
   if (/chelsea hotel|hotel chelsea/i.test(text)) {
@@ -925,6 +959,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 215,
       previewSeekSeconds: 4,
       wikiSlug: 'Hotel_Chelsea',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/0/0e/Bob_Dylan_-_Desire.jpg',
     };
   }
   if (/gerde|folk city/i.test(text)) {
@@ -936,6 +971,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 8,
       previewSeekSeconds: 0,
       wikiSlug: 'MacDougal_Street',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/d/d6/Bob_Dylan_-_The_Freewheelin%27_Bob_Dylan.jpg',
     };
   }
   if (/penny lane/i.test(text)) {
@@ -946,6 +982,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 4,
       previewSeekSeconds: 0,
       wikiSlug: 'Penny_Lane',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/e/e8/MagicalMysteryTourDoubleEPcover.jpg',
     };
   }
   if (/strawberry field/i.test(text)) {
@@ -956,6 +993,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 12,
       previewSeekSeconds: 0,
       wikiSlug: 'Strawberry_Field',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/e/e8/MagicalMysteryTourDoubleEPcover.jpg',
     };
   }
   if (/cavern club/i.test(text)) {
@@ -966,6 +1004,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 3,
       previewSeekSeconds: 0,
       wikiSlug: 'The_Cavern_Club',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/c/c0/PleasePleaseMe_audio_cover.jpg',
     };
   }
   if (/bishopsgate|mr\.?\s*kite/i.test(text)) {
@@ -975,6 +1014,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseTimestamp: '0:22 (Bishopsgate Verse)',
       exactVerseSeconds: 22,
       previewSeekSeconds: 0,
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/5/50/Sgt._Pepper%27s_Lonely_Hearts_Club_Band.jpg',
     };
   }
   if (/troubadour/i.test(text)) {
@@ -985,6 +1025,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 18,
       previewSeekSeconds: 3,
       wikiSlug: 'Troubadour_(West_Hollywood,_California)',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/0/00/Eagles_-_Eagles.jpg',
     };
   }
   if (/ufo club|roundhouse/i.test(text)) {
@@ -995,6 +1036,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 28,
       previewSeekSeconds: 4,
       wikiSlug: 'Roundhouse_(venue)',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/3/3c/PinkFloyd-album-piperatthegatesofdawn_300.jpg',
     };
   }
   if (/warner bros|wish you were here/i.test(text)) {
@@ -1006,6 +1048,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 78,
       previewSeekSeconds: 5,
       wikiSlug: 'Wish_You_Were_Here_(Pink_Floyd_album)',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/a/a4/Pink_Floyd%2C_Wish_You_Were_Here_%281975%29.png',
     };
   }
 
@@ -1017,6 +1060,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 65,
       previewSeekSeconds: 4,
       wikiSlug: 'Bob_Dylan',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/9/95/Bob_Dylan_-_Highway_61_Revisited.jpg',
     };
   }
   if (artistLower.includes('zeppelin')) {
@@ -1027,6 +1071,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 2,
       previewSeekSeconds: 0,
       wikiSlug: 'Led_Zeppelin',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/2/26/Led_Zeppelin_-_Led_Zeppelin_IV.jpg',
     };
   }
   if (artistLower.includes('beatles')) {
@@ -1037,6 +1082,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 10,
       previewSeekSeconds: 0,
       wikiSlug: 'The_Beatles',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/7/74/Rubber_Soul.jpg',
     };
   }
   if (artistLower.includes('eagles')) {
@@ -1047,6 +1093,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
       exactVerseSeconds: 13,
       previewSeekSeconds: 4,
       wikiSlug: 'Eagles_(band)',
+      defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/4/49/Hotelcalifornia.jpg',
     };
   }
   return {
@@ -1056,6 +1103,7 @@ function resolvePinTrack(pin: NormalizedPin): SongResolution {
     exactVerseSeconds: 78,
     previewSeekSeconds: 5,
     wikiSlug: 'Pink_Floyd',
+    defaultImageUrl: 'https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png',
   };
 }
 
@@ -1316,7 +1364,6 @@ export default function VerseMapPage() {
     };
   }, []);
 
-  // SELF-HEALING FALLBACK: If Supabase missed the image/audio, or it's a hardcoded pin, fetch via iTunes on the fly.
   useEffect(
     function () {
       if (audioRef.current) {

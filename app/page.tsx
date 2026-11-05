@@ -74,6 +74,56 @@ const ROUTE_DASH_PAINT: any = {
   'line-dasharray': [2, 2],
 };
 
+// Phase 4 Supercluster Layer Configurations
+const INTERACTIVE_LAYER_IDS = ['clusters', 'unclustered-point'];
+
+const CLUSTER_FILTER: any = ['has', 'point_count'];
+const UNCLUSTERED_FILTER: any = ['!', ['has', 'point_count']];
+
+const CLUSTER_CIRCLE_PAINT: any = {
+  'circle-color': [
+    'step',
+    ['get', 'point_count'],
+    '#f59e0b',
+    8,
+    '#ec4899',
+    25,
+    '#a855f7',
+  ],
+  'circle-radius': ['step', ['get', 'point_count'], 19, 8, 24, 25, 30],
+  'circle-stroke-width': 2.5,
+  'circle-stroke-color': '#09090b',
+};
+
+const CLUSTER_COUNT_LAYOUT: any = {
+  'text-field': '{point_count_abbreviated}',
+  'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+  'text-size': 13,
+};
+
+const CLUSTER_COUNT_PAINT: any = {
+  'text-color': '#09090b',
+};
+
+const UNCLUSTERED_HALO_PAINT: any = {
+  'circle-color': ['get', 'color'],
+  'circle-radius': ['case', ['boolean', ['get', 'isSelected'], false], 18, 12],
+  'circle-opacity': ['case', ['boolean', ['get', 'isSelected'], false], 0.45, 0.22],
+  'circle-blur': 0.4,
+};
+
+const UNCLUSTERED_POINT_PAINT: any = {
+  'circle-color': ['get', 'color'],
+  'circle-radius': ['case', ['boolean', ['get', 'isSelected'], false], 10, 7.5],
+  'circle-stroke-width': ['case', ['boolean', ['get', 'isSelected'], false], 3, 2],
+  'circle-stroke-color': [
+    'case',
+    ['boolean', ['get', 'isSelected'], false],
+    '#ffffff',
+    '#18181b',
+  ],
+};
+
 const ERA_PRESETS = [
   {
     id: 'ALL',
@@ -236,7 +286,6 @@ const SUPPLEMENTAL_VERIFIED_PINS: NormalizedPin[] = [
   },
 ];
 
-// Step 3.2 Helper: Haversine Great-Circle Distance Formula (in kilometers)
 function toRadians(degrees: number): number {
   return (degrees * Math.PI) / 180;
 }
@@ -260,7 +309,6 @@ function getHaversineDistanceKm(
   return earthRadiusKm * c;
 }
 
-// Step 3.2 Helper: Nearest-Neighbor Shortest-Path Route Optimizer
 function optimizeStopsNearestNeighbor(stops: NormalizedPin[]): NormalizedPin[] {
   if (stops.length <= 2) {
     return [...stops];
@@ -1021,6 +1069,8 @@ export default function VerseMapPage() {
   const [selectedArtist, setSelectedArtist] = useState('ALL');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedEra, setSelectedEra] = useState('ALL');
+  const [placeSearch, setPlaceSearch] = useState('');
+  const [mapCursor, setMapCursor] = useState('grab');
 
   const [selectedPin, setSelectedPin] = useState(null as NormalizedPin | null);
   const [audioLoading, setAudioLoading] = useState(false);
@@ -1032,10 +1082,8 @@ export default function VerseMapPage() {
   const [audioProgress, setAudioProgress] = useState(0);
   const [audioCurrentTime, setAudioCurrentTime] = useState(0);
 
-  // Phase 3 Feature 1: Mobile Responsiveness
   const [windowWidth, setWindowWidth] = useState(1200);
 
-  // Phase 3 Feature 3, 3.2 & 3.3: Tour Bus Cart & Route Optimization State
   const [tourStops, setTourStops] = useState([] as NormalizedPin[]);
   const [isTourTrayOpen, setIsTourTrayOpen] = useState(false);
   const [isRouteOptimized, setIsRouteOptimized] = useState(false);
@@ -1409,9 +1457,19 @@ export default function VerseMapPage() {
 
   const filteredPins = useMemo(
     function () {
+      const normalizedPlaceQuery = placeSearch.trim().toLowerCase();
+
       return pins.filter(function (pin) {
         if (selectedArtist !== 'ALL' && pin.artist !== selectedArtist) return false;
         if (selectedCategory !== 'ALL' && pin.category !== selectedCategory) return false;
+
+        if (normalizedPlaceQuery !== '') {
+          const searchablePlaceText =
+            `${pin.title} ${pin.rawQuery} ${pin.lyricOrContext} ${pin.songOrAlbum} ${pin.sceneTags.join(' ')}`.toLowerCase();
+          if (!searchablePlaceText.includes(normalizedPlaceQuery)) {
+            return false;
+          }
+        }
 
         if (selectedEra === 'GREENWICH_VILLAGE') {
           const isNYC = 40.5 < pin.lat && pin.lat < 42.2 && -74.5 < pin.lng && pin.lng < -73.7;
@@ -1442,10 +1500,10 @@ export default function VerseMapPage() {
         return true;
       });
     },
-    [pins, selectedArtist, selectedCategory, selectedEra]
+    [pins, selectedArtist, selectedCategory, selectedEra, placeSearch]
   );
 
-  // Phase 3 Feature 2: Marker Overlap Offset (Spiderfying)
+  // Spiderfy overlapping pins so close neighbors remain distinct when zoomed past cluster threshold
   const spiderfiedPins = useMemo(
     function () {
       const threshold = 0.00055;
@@ -1483,18 +1541,90 @@ export default function VerseMapPage() {
     [filteredPins]
   );
 
-  // Phase 3 Feature 3: Tour Bus Cart Helpers
-  const isPinInTour = function (pinId: string | number) {
-    return tourStops.some(function (stop) {
-      return stop.id === pinId;
+  // Phase 4: Memoize filtered & spiderfied pins into a GeoJSON FeatureCollection for Mapbox Supercluster
+  const pinsGeoJson: any = useMemo(
+    function () {
+      const features = spiderfiedPins.map(function (pin) {
+        const isCurrentSelected = selectedPin
+          ? String(selectedPin.id) === String(pin.id)
+          : false;
+
+        return {
+          type: 'Feature',
+          properties: {
+            pinId: String(pin.id),
+            title: pin.title,
+            artist: pin.artist,
+            category: pin.category,
+            color: getCategoryColor(pin.category),
+            isSelected: isCurrentSelected,
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: [pin.displayLng ?? pin.lng, pin.displayLat ?? pin.lat],
+          },
+        };
+      });
+
+      return {
+        type: 'FeatureCollection',
+        features: features,
+      };
+    },
+    [spiderfiedPins, selectedPin]
+  );
+
+  // Fly camera to frame current filtered search results when user submits city/region query
+  const handleFlyToPlaceResults = function () {
+    if (!mapRef.current || filteredPins.length === 0) return;
+
+    if (filteredPins.length === 1) {
+      const single = filteredPins[0];
+      setSelectedPin(single);
+      mapRef.current.flyTo({
+        center: [single.lng, single.lat],
+        zoom: 14,
+        duration: 1200,
+        essential: true,
+      });
+      return;
+    }
+
+    let minLat = filteredPins[0].lat;
+    let maxLat = filteredPins[0].lat;
+    let minLng = filteredPins[0].lng;
+    let maxLng = filteredPins[0].lng;
+
+    for (let i = 1; i < filteredPins.length; i = i + 1) {
+      const p = filteredPins[i];
+      if (p.lat < minLat) minLat = p.lat;
+      if (maxLat < p.lat) maxLat = p.lat;
+      if (p.lng < minLng) minLng = p.lng;
+      if (maxLng < p.lng) maxLng = p.lng;
+    }
+
+    const centerLat = (minLat + maxLat) / 2;
+    const centerLng = (minLng + maxLng) / 2;
+    const maxSpan = Math.max(maxLat - minLat, maxLng - minLng);
+
+    let targetZoom = 12.5;
+    if (25 < maxSpan) targetZoom = 2.6;
+    else if (6 < maxSpan) targetZoom = 5.2;
+    else if (1.2 < maxSpan) targetZoom = 8.5;
+    else if (0.2 < maxSpan) targetZoom = 11.2;
+
+    mapRef.current.flyTo({
+      center: [centerLng, centerLat],
+      zoom: targetZoom,
+      duration: 1300,
+      essential: true,
     });
   };
 
-  const getTourStopNumber = function (pinId: string | number) {
-    const index = tourStops.findIndex(function (stop) {
-      return stop.id === pinId;
+  const isPinInTour = function (pinId: string | number) {
+    return tourStops.some(function (stop) {
+      return String(stop.id) === String(pinId);
     });
-    return index === -1 ? null : index + 1;
   };
 
   const handleToggleTourStop = function (pin: NormalizedPin) {
@@ -1503,7 +1633,7 @@ export default function VerseMapPage() {
     if (exists) {
       setTourStops(
         tourStops.filter(function (stop) {
-          return stop.id !== pin.id;
+          return String(stop.id) !== String(pin.id);
         })
       );
     } else {
@@ -1516,7 +1646,7 @@ export default function VerseMapPage() {
     setIsRouteOptimized(false);
     setTourStops(
       tourStops.filter(function (stop) {
-        return stop.id !== pinId;
+        return String(stop.id) !== String(pinId);
       })
     );
   };
@@ -1527,7 +1657,6 @@ export default function VerseMapPage() {
     setIsTourTrayOpen(false);
   };
 
-  // Step 3.2: Run Haversine Nearest-Neighbor Optimizer & Center Camera on Route
   const handleOptimizeRoute = function () {
     if (tourStops.length < 2) return;
     const optimized = optimizeStopsNearestNeighbor(tourStops);
@@ -1567,7 +1696,6 @@ export default function VerseMapPage() {
     }
   };
 
-  // Step 3.3a: Build GeoJSON LineString for the Optimized Route
   const routeGeoJson: any = useMemo(
     function () {
       if (!isRouteOptimized || tourStops.length < 2) {
@@ -1576,7 +1704,7 @@ export default function VerseMapPage() {
 
       const coordinates = tourStops.map(function (stop) {
         const spiderMatch = spiderfiedPins.find(function (sp) {
-          return sp.id === stop.id;
+          return String(sp.id) === String(stop.id);
         });
         const lng = spiderMatch ? (spiderMatch.displayLng ?? stop.lng) : stop.lng;
         const lat = spiderMatch ? (spiderMatch.displayLat ?? stop.lat) : stop.lat;
@@ -1602,7 +1730,6 @@ export default function VerseMapPage() {
     [tourStops]
   );
 
-  // Step 3.3b: Build Multi-Stop Google Maps Directions URL (origin, destination, pipe-joined waypoints)
   const buildGoogleMapsDirectionsUrl = function () {
     if (tourStops.length < 2) return 'https://www.google.com/maps';
 
@@ -1650,8 +1777,95 @@ export default function VerseMapPage() {
     }
   };
 
-  const handleMapClick = function () {
-    setSelectedPin(null);
+  // Phase 4: Query Rendered Features on Map Click (Expand Clusters or Open Unclustered Pin Drawer)
+  const handleMapClick = function (e: any) {
+    if (!mapRef.current) {
+      setSelectedPin(null);
+      return;
+    }
+
+    const renderedFeatures = mapRef.current.queryRenderedFeatures(e.point, {
+      layers: INTERACTIVE_LAYER_IDS,
+    });
+
+    if (!renderedFeatures || renderedFeatures.length === 0) {
+      setSelectedPin(null);
+      return;
+    }
+
+    const topFeature = renderedFeatures[0];
+    const layerId = topFeature.layer ? topFeature.layer.id : '';
+
+    if (layerId === 'clusters') {
+      const clusterId = topFeature.properties ? topFeature.properties.cluster_id : null;
+      const pointGeometry: any = topFeature.geometry;
+      const clusterCoords =
+        pointGeometry && Array.isArray(pointGeometry.coordinates)
+          ? pointGeometry.coordinates
+          : null;
+
+      const geoJsonSource: any = mapRef.current.getSource('pins');
+
+      if (
+        geoJsonSource &&
+        typeof geoJsonSource.getClusterExpansionZoom === 'function' &&
+        clusterId !== null &&
+        clusterCoords
+      ) {
+        geoJsonSource.getClusterExpansionZoom(
+          clusterId,
+          function (err: any, expansionZoom: number) {
+            if (!err && mapRef.current) {
+              mapRef.current.flyTo({
+                center: [clusterCoords[0], clusterCoords[1]],
+                zoom: Math.min(expansionZoom, 16),
+                duration: 750,
+                essential: true,
+              });
+            }
+          }
+        );
+      } else if (clusterCoords) {
+        const currentZoom = mapRef.current.getZoom() || 3;
+        mapRef.current.flyTo({
+          center: [clusterCoords[0], clusterCoords[1]],
+          zoom: Math.min(currentZoom + 2.5, 16),
+          duration: 750,
+          essential: true,
+        });
+      }
+      return;
+    }
+
+    if (layerId === 'unclustered-point') {
+      const clickedPinId = topFeature.properties ? topFeature.properties.pinId : null;
+      if (clickedPinId !== null) {
+        const foundPin = spiderfiedPins.find(function (p) {
+          return String(p.id) === String(clickedPinId);
+        });
+        if (foundPin) {
+          setSelectedPin(foundPin);
+          mapRef.current.flyTo({
+            center: [foundPin.lng, foundPin.lat],
+            zoom: Math.max(mapRef.current.getZoom() || 11, 14),
+            duration: 900,
+            essential: true,
+          });
+        }
+      }
+    }
+  };
+
+  const handleMapMouseMove = function (e: any) {
+    if (!mapRef.current) return;
+    const hovered = mapRef.current.queryRenderedFeatures(e.point, {
+      layers: INTERACTIVE_LAYER_IDS,
+    });
+    if (hovered && 0 < hovered.length) {
+      setMapCursor('pointer');
+    } else {
+      setMapCursor('grab');
+    }
   };
 
   const buildGoogleMapsUrl = function (pin: NormalizedPin) {
@@ -1684,7 +1898,7 @@ export default function VerseMapPage() {
         fontFamily: 'system-ui, -apple-system, sans-serif',
       }}
     >
-      {/* TOP FILTER & CONTROL BAR */}
+      {/* TOP FILTER & CITY SEARCH BAR */}
       <div
         style={{
           position: 'absolute',
@@ -1705,7 +1919,7 @@ export default function VerseMapPage() {
           transition: 'right 0.25s ease',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           <div style={{ fontWeight: 800, fontSize: 18, letterSpacing: '-0.02em', color: '#fff' }}>
             🎸 VerseMap
           </div>
@@ -1723,6 +1937,75 @@ export default function VerseMapPage() {
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+          {/* Phase 4: City / Region Search Input */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: '#18181b',
+              border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: 8,
+              padding: '3px 6px 3px 10px',
+              gap: 6,
+            }}
+          >
+            <input
+              type="text"
+              value={placeSearch}
+              placeholder="Search city, street, or venue..."
+              onChange={function (e) {
+                setPlaceSearch(e.target.value);
+              }}
+              onKeyDown={function (e) {
+                if (e.key === 'Enter') {
+                  handleFlyToPlaceResults();
+                }
+              }}
+              style={{
+                backgroundColor: 'transparent',
+                border: 'none',
+                outline: 'none',
+                color: '#f4f4f5',
+                fontSize: 12,
+                width: isMobile ? 140 : 185,
+              }}
+            />
+            {placeSearch !== '' && (
+              <button
+                onClick={function () {
+                  setPlaceSearch('');
+                }}
+                title="Clear search"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#a1a1aa',
+                  cursor: 'pointer',
+                  fontSize: 12,
+                  padding: '2px 4px',
+                }}
+              >
+                ✕
+              </button>
+            )}
+            <button
+              onClick={handleFlyToPlaceResults}
+              title="Fly to matching locations"
+              style={{
+                backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                border: '1px solid rgba(245, 158, 11, 0.4)',
+                color: '#fde68a',
+                borderRadius: 6,
+                padding: '4px 8px',
+                fontSize: 11,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              Fly
+            </button>
+          </div>
+
           <select
             value={selectedArtist}
             onChange={function (e) {
@@ -2095,7 +2378,6 @@ export default function VerseMapPage() {
                 </div>
               )}
 
-              {/* Step 3.2 & 3.3b: Dynamic Optimize vs. Export to Google Maps Button */}
               {isRouteOptimized && canOptimizeRoute ? (
                 <button
                   onClick={handleExportDirections}
@@ -2165,18 +2447,21 @@ export default function VerseMapPage() {
         </div>
       )}
 
-      {/* FULLSCREEN MAPBOX CANVAS */}
+      {/* FULLSCREEN MAPBOX CANVAS WITH GEOJSON SUPERCLUSTER + TOUR BUS MARKERS */}
       <MapboxMap
         ref={mapRef}
         initialViewState={INITIAL_MAP_VIEW}
         mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
         style={MAP_CONTAINER_STYLE}
+        interactiveLayerIds={INTERACTIVE_LAYER_IDS}
+        cursor={mapCursor}
         onClick={handleMapClick}
+        onMouseMove={handleMapMouseMove}
       >
         <NavigationControl position="bottom-right" />
 
-        {/* Step 3.3a: Glowing Dashed Route Line (GeoJSON Source + Dual Layers) */}
+        {/* Phase 3.3a: Glowing Dashed Route Line */}
         {routeGeoJson && (
           <Source id="tour-bus-route" type="geojson" data={routeGeoJson}>
             <Layer
@@ -2194,23 +2479,66 @@ export default function VerseMapPage() {
           </Source>
         )}
 
-        {spiderfiedPins.map(function (pin) {
-          const pinColor = getCategoryColor(pin.category);
-          const isSelected = selectedPin?.id === pin.id;
-          const stopNumber = getTourStopNumber(pin.id);
+        {/* Phase 4: Native Mapbox Supercluster Source & Layers (Scales to 10,000+ Pins) */}
+        <Source
+          id="pins"
+          type="geojson"
+          data={pinsGeoJson}
+          cluster={true}
+          clusterMaxZoom={13}
+          clusterRadius={42}
+        >
+          <Layer
+            id="clusters"
+            type="circle"
+            filter={CLUSTER_FILTER}
+            paint={CLUSTER_CIRCLE_PAINT}
+          />
+          <Layer
+            id="cluster-count"
+            type="symbol"
+            filter={CLUSTER_FILTER}
+            layout={CLUSTER_COUNT_LAYOUT}
+            paint={CLUSTER_COUNT_PAINT}
+          />
+          <Layer
+            id="unclustered-point-halo"
+            type="circle"
+            filter={UNCLUSTERED_FILTER}
+            paint={UNCLUSTERED_HALO_PAINT}
+          />
+          <Layer
+            id="unclustered-point"
+            type="circle"
+            filter={UNCLUSTERED_FILTER}
+            paint={UNCLUSTERED_POINT_PAINT}
+          />
+        </Source>
+
+        {/* Preserve Numbered Tour Bus Stop Markers Above All Cluster Layers */}
+        {tourStops.map(function (stop, stopIdx) {
+          const spiderMatch = spiderfiedPins.find(function (sp) {
+            return String(sp.id) === String(stop.id);
+          });
+          const markerLat = spiderMatch ? (spiderMatch.displayLat ?? stop.lat) : stop.lat;
+          const markerLng = spiderMatch ? (spiderMatch.displayLng ?? stop.lng) : stop.lng;
+          const pinColor = getCategoryColor(stop.category);
+          const isSelected = selectedPin
+            ? String(selectedPin.id) === String(stop.id)
+            : false;
 
           return (
             <Marker
-              key={pin.id}
-              latitude={pin.displayLat ?? pin.lat}
-              longitude={pin.displayLng ?? pin.lng}
+              key={`tour-stop-${stop.id}`}
+              latitude={markerLat}
+              longitude={markerLng}
               anchor="bottom"
               onClick={function (e) {
                 e.originalEvent.stopPropagation();
-                setSelectedPin(pin);
+                setSelectedPin(stop);
                 if (mapRef.current) {
                   mapRef.current.flyTo({
-                    center: [pin.lng, pin.lat],
+                    center: [stop.lng, stop.lat],
                     zoom: Math.max(mapRef.current.getZoom() || 11, 14),
                     duration: 900,
                   });
@@ -2218,54 +2546,47 @@ export default function VerseMapPage() {
               }}
             >
               <div
-                title={`${pin.title} (${pin.artist})`}
+                title={`Tour Stop #${stopIdx + 1}: ${stop.title} (${stop.artist})`}
                 style={{
                   position: 'relative',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  transform: isSelected ? 'scale(1.3)' : 'scale(1)',
+                  transform: isSelected ? 'scale(1.3)' : 'scale(1.1)',
                   transition: 'transform 0.15s ease',
+                  zIndex: 5,
                 }}
               >
-                {stopNumber !== null && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: -8,
-                      right: -8,
-                      width: 18,
-                      height: 18,
-                      borderRadius: '50%',
-                      backgroundColor: isRouteOptimized ? '#10b981' : '#f59e0b',
-                      color: '#09090b',
-                      fontSize: 10,
-                      fontWeight: 800,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      border: '2px solid #09090b',
-                      zIndex: 2,
-                    }}
-                  >
-                    {stopNumber}
-                  </div>
-                )}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: -9,
+                    right: -9,
+                    width: 20,
+                    height: 20,
+                    borderRadius: '50%',
+                    backgroundColor: isRouteOptimized ? '#10b981' : '#f59e0b',
+                    color: '#09090b',
+                    fontSize: 11,
+                    fontWeight: 800,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '2px solid #09090b',
+                    zIndex: 6,
+                  }}
+                >
+                  {stopIdx + 1}
+                </div>
                 <div
                   style={{
                     width: 24,
                     height: 24,
                     borderRadius: '50%',
                     backgroundColor: pinColor,
-                    border: isSelected
-                      ? '3px solid #ffffff'
-                      : stopNumber !== null
-                      ? '2px solid #fbbf24'
-                      : '2px solid #18181b',
-                    boxShadow: isSelected
-                      ? `0 0 16px ${pinColor}`
-                      : '0 2px 6px rgba(0,0,0,0.6)',
+                    border: isSelected ? '3px solid #ffffff' : '2px solid #fbbf24',
+                    boxShadow: `0 0 14px ${pinColor}`,
                   }}
                 />
                 <div
@@ -2663,7 +2984,6 @@ export default function VerseMapPage() {
             </div>
           </div>
 
-          {/* Drawer Action Buttons: Add/Remove Tour Bus + Open in Google Maps */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <button
               onClick={function () {

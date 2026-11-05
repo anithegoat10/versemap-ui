@@ -44,10 +44,24 @@ interface SongResolution {
   wikiSlug?: string;
 }
 
+interface ViewportBounds {
+  north: number;
+  south: number;
+  east: number;
+  west: number;
+}
+
 const INITIAL_MAP_VIEW = {
   latitude: 40.0,
   longitude: -30.0,
   zoom: 2.2,
+};
+
+const DEFAULT_BOUNDS: ViewportBounds = {
+  north: 85,
+  south: -85,
+  east: 180,
+  west: -180,
 };
 
 const MAP_CONTAINER_STYLE = {
@@ -74,10 +88,12 @@ const ROUTE_DASH_PAINT: any = {
   'line-dasharray': [2, 2],
 };
 
-const INTERACTIVE_LAYER_IDS = ['clusters', 'unclustered-point'];
+// Step 4.2: Only clusters are rendered in WebGL; unclustered pins render as custom HTML/SVG <Marker>s
+const INTERACTIVE_LAYER_IDS = ['clusters'];
+const CLUSTER_MAX_ZOOM = 13;
+const CLUSTER_RADIUS_PX = 42;
 
 const CLUSTER_FILTER: any = ['has', 'point_count'];
-const UNCLUSTERED_FILTER: any = ['!', ['has', 'point_count']];
 
 const CLUSTER_CIRCLE_PAINT: any = {
   'circle-color': [
@@ -102,25 +118,6 @@ const CLUSTER_COUNT_LAYOUT: any = {
 
 const CLUSTER_COUNT_PAINT: any = {
   'text-color': '#09090b',
-};
-
-const UNCLUSTERED_HALO_PAINT: any = {
-  'circle-color': ['get', 'color'],
-  'circle-radius': ['case', ['boolean', ['get', 'isSelected'], false], 18, 12],
-  'circle-opacity': ['case', ['boolean', ['get', 'isSelected'], false], 0.45, 0.22],
-  'circle-blur': 0.4,
-};
-
-const UNCLUSTERED_POINT_PAINT: any = {
-  'circle-color': ['get', 'color'],
-  'circle-radius': ['case', ['boolean', ['get', 'isSelected'], false], 10, 7.5],
-  'circle-stroke-width': ['case', ['boolean', ['get', 'isSelected'], false], 3, 2],
-  'circle-stroke-color': [
-    'case',
-    ['boolean', ['get', 'isSelected'], false],
-    '#ffffff',
-    '#18181b',
-  ],
 };
 
 const ERA_PRESETS = [
@@ -306,6 +303,29 @@ function getHaversineDistanceKm(
       Math.sin(dLng / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return earthRadiusKm * c;
+}
+
+// Web Mercator pixel projection for zero-dependency unclustered pin detection
+function projectToWorldPixels(lat: number, lng: number, zoom: number): { x: number; y: number } {
+  const worldSize = 512 * Math.pow(2, Math.floor(zoom));
+  const x = ((lng + 180) / 360) * worldSize;
+  const sinLat = Math.sin((lat * Math.PI) / 180);
+  const clampedSin = Math.max(-0.9999, Math.min(0.9999, sinLat));
+  const y =
+    (0.5 - Math.log((1 + clampedSin) / (1 - clampedSin)) / (4 * Math.PI)) * worldSize;
+  return { x: x, y: y };
+}
+
+function isPinWithinBounds(lat: number, lng: number, bounds: ViewportBounds): boolean {
+  const latMargin = 0.08;
+  const lngMargin = 0.08;
+  if (lat < bounds.south - latMargin || bounds.north + latMargin < lat) {
+    return false;
+  }
+  if (bounds.west <= bounds.east) {
+    return bounds.west - lngMargin <= lng && lng <= bounds.east + lngMargin;
+  }
+  return bounds.west - lngMargin <= lng || lng <= bounds.east + lngMargin;
 }
 
 function optimizeStopsNearestNeighbor(stops: NormalizedPin[]): NormalizedPin[] {
@@ -1025,6 +1045,127 @@ function getCategoryColor(category: string): string {
   return '#f59e0b';
 }
 
+// Step 4.2: Custom Inline SVG Icon Renderer for the 4 Pin Categories
+function renderCategorySvgIcon(category: string, color: string) {
+  const upper = (category || '').toUpperCase();
+
+  // 1. ALBUM_COVER: Stylized Vinyl Record / LP Disc
+  if (upper.includes('COVER') || upper.includes('ALBUM')) {
+    return (
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle cx="12" cy="12" r="9.5" fill="#09090b" stroke={color} strokeWidth="2" />
+        <path
+          d="M7.5 12A4.5 4.5 0 0 1 12 7.5"
+          stroke={color}
+          strokeWidth="1.3"
+          strokeLinecap="round"
+          opacity="0.75"
+        />
+        <path
+          d="M16.5 12A4.5 4.5 0 0 1 12 16.5"
+          stroke={color}
+          strokeWidth="1.3"
+          strokeLinecap="round"
+          opacity="0.75"
+        />
+        <circle cx="12" cy="12" r="3.2" fill={color} />
+        <circle cx="12" cy="12" r="1.1" fill="#09090b" />
+      </svg>
+    );
+  }
+
+  // 2. HISTORIC_VENUE: Minimalist Vintage Stage Microphone
+  if (upper.includes('VENUE')) {
+    return (
+      <svg
+        width="17"
+        height="17"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          x="9"
+          y="3"
+          width="6"
+          height="10"
+          rx="3"
+          fill={color}
+          fillOpacity="0.25"
+          stroke={color}
+          strokeWidth="2"
+        />
+        <line x1="9" y1="7.5" x2="15" y2="7.5" stroke={color} strokeWidth="1.4" />
+        <path
+          d="M6 10.5V11C6 14.3137 8.68629 17 12 17C15.3137 17 18 14.3137 18 11V10.5"
+          stroke={color}
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <line x1="12" y1="17" x2="12" y2="21" stroke={color} strokeWidth="2" strokeLinecap="round" />
+        <line x1="8.5" y1="21" x2="15.5" y2="21" stroke={color} strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  // 3. TRIBUTE_MURAL: Stylized Artist Paintbrush
+  if (upper.includes('TRIBUTE') || upper.includes('MURAL')) {
+    return (
+      <svg
+        width="17"
+        height="17"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18.37 3.63C19.15 4.41 19.15 5.68 18.37 6.46L11.5 13.33L8.67 10.5L15.54 3.63C16.32 2.85 17.59 2.85 18.37 3.63Z"
+          fill={color}
+          fillOpacity="0.3"
+          stroke={color}
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M8.67 10.5L11.5 13.33C11.5 15.8 9.8 18.5 6.5 19.5C5.2 19.89 4.2 19.6 3.5 19C4.1 17.8 4.4 16.5 4.7 15.2C5.2 12.8 6.8 11.2 8.67 10.5Z"
+          fill={color}
+          stroke={color}
+          strokeWidth="1.6"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  // 4. LYRIC_MENTION (Default): Beamed Double Musical Note
+  return (
+    <svg
+      width="17"
+      height="17"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M9 17.5V6.5L19 4.5V15.5"
+        stroke={color}
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M9 9.5L19 7.5" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <circle cx="6.5" cy="17.5" r="2.7" fill={color} />
+      <circle cx="16.5" cy="15.5" r="2.7" fill={color} />
+    </svg>
+  );
+}
+
 function getSurvivalBadge(siteStatus: string, businessStatus: string) {
   const combined = `${siteStatus} ${businessStatus}`.toUpperCase();
   if (combined.includes('OPERATIONAL') || combined.includes('INTACT_PUBLIC')) {
@@ -1071,6 +1212,11 @@ export default function VerseMapPage() {
   const [placeSearch, setPlaceSearch] = useState('');
   const [mapCursor, setMapCursor] = useState('grab');
 
+  // Step 4.2: Viewport & Hover State for Custom HTML/SVG Unclustered Markers
+  const [mapZoom, setMapZoom] = useState(INITIAL_MAP_VIEW.zoom);
+  const [mapBounds, setMapBounds] = useState(DEFAULT_BOUNDS as ViewportBounds);
+  const [hoveredPinId, setHoveredPinId] = useState(null as string | number | null);
+
   const [selectedPin, setSelectedPin] = useState(null as NormalizedPin | null);
   const [audioLoading, setAudioLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null as string | null);
@@ -1099,6 +1245,23 @@ export default function VerseMapPage() {
   }, []);
 
   const isMobile = windowWidth < 768;
+
+  const syncViewportState = function () {
+    if (!mapRef.current) return;
+    const currentZoom = mapRef.current.getZoom();
+    if (typeof currentZoom === 'number' && !Number.isNaN(currentZoom)) {
+      setMapZoom(currentZoom);
+    }
+    const b = mapRef.current.getBounds();
+    if (b) {
+      setMapBounds({
+        north: b.getNorth(),
+        south: b.getSouth(),
+        east: b.getEast(),
+        west: b.getWest(),
+      });
+    }
+  };
 
   useEffect(function () {
     async function fetchPins() {
@@ -1443,7 +1606,7 @@ export default function VerseMapPage() {
     }
   };
 
-  const artistOptions = useMemo(
+  const artistOptions: string[] = useMemo(
     function () {
       const set = new Set();
       pins.forEach(function (p) {
@@ -1454,7 +1617,7 @@ export default function VerseMapPage() {
     [pins]
   );
 
-  const filteredPins = useMemo(
+  const filteredPins: NormalizedPin[] = useMemo(
     function () {
       const normalizedPlaceQuery = placeSearch.trim().toLowerCase();
 
@@ -1571,6 +1734,86 @@ export default function VerseMapPage() {
     [spiderfiedPins, selectedPin]
   );
 
+  // Step 4.2: Compute visible unclustered pins + active Tour Bus stops for custom HTML/SVG rendering
+  const visibleHtmlPins: NormalizedPin[] = useMemo(
+    function () {
+      const projectedList = spiderfiedPins.map(function (pin) {
+        const lat = pin.displayLat ?? pin.lat;
+        const lng = pin.displayLng ?? pin.lng;
+        const px = projectToWorldPixels(lat, lng, mapZoom);
+        return {
+          pin: pin,
+          lat: lat,
+          lng: lng,
+          x: px.x,
+          y: px.y,
+        };
+      });
+
+      const result: NormalizedPin[] = [];
+      const addedIds = new Set<string>();
+
+      for (let i = 0; i < projectedList.length; i = i + 1) {
+        const item = projectedList[i];
+        const pinIdStr = String(item.pin.id);
+
+        const isTourStop = tourStops.some(function (stop) {
+          return String(stop.id) === pinIdStr;
+        });
+        const isCurrentSelected = selectedPin
+          ? String(selectedPin.id) === pinIdStr
+          : false;
+
+        if (isTourStop || isCurrentSelected) {
+          result.push(item.pin);
+          addedIds.add(pinIdStr);
+          continue;
+        }
+
+        if (!isPinWithinBounds(item.lat, item.lng, mapBounds)) {
+          continue;
+        }
+
+        if (CLUSTER_MAX_ZOOM < mapZoom) {
+          result.push(item.pin);
+          addedIds.add(pinIdStr);
+          continue;
+        }
+
+        let hasClusterNeighbor = false;
+        for (let j = 0; j < projectedList.length; j = j + 1) {
+          if (i === j) continue;
+          const other = projectedList[j];
+          const dx = item.x - other.x;
+          const dy = item.y - other.y;
+          const distPx = Math.sqrt(dx * dx + dy * dy);
+          if (distPx <= CLUSTER_RADIUS_PX) {
+            hasClusterNeighbor = true;
+            break;
+          }
+        }
+
+        if (!hasClusterNeighbor) {
+          result.push(item.pin);
+          addedIds.add(pinIdStr);
+        }
+      }
+
+      // Ensure any Tour Bus stop filtered out by category/artist still renders its numbered stop marker
+      for (let k = 0; k < tourStops.length; k = k + 1) {
+        const stop = tourStops[k];
+        const stopIdStr = String(stop.id);
+        if (!addedIds.has(stopIdStr)) {
+          result.push(stop);
+          addedIds.add(stopIdStr);
+        }
+      }
+
+      return result;
+    },
+    [spiderfiedPins, mapZoom, mapBounds, tourStops, selectedPin]
+  );
+
   const handleFlyToPlaceResults = function () {
     if (!mapRef.current || filteredPins.length === 0) return;
 
@@ -1621,6 +1864,13 @@ export default function VerseMapPage() {
     return tourStops.some(function (stop) {
       return String(stop.id) === String(pinId);
     });
+  };
+
+  const getTourStopNumber = function (pinId: string | number) {
+    const index = tourStops.findIndex(function (stop) {
+      return String(stop.id) === String(pinId);
+    });
+    return index === -1 ? null : index + 1;
   };
 
   const handleToggleTourStop = function (pin: NormalizedPin) {
@@ -1724,7 +1974,7 @@ export default function VerseMapPage() {
     [isRouteOptimized, tourStops, spiderfiedPins]
   );
 
-  const totalRouteKm = useMemo(
+  const totalRouteKm: number = useMemo(
     function () {
       return calculateTotalRouteDistanceKm(tourStops);
     },
@@ -1778,6 +2028,7 @@ export default function VerseMapPage() {
     }
   };
 
+  // Step 4.2: Map Click Handler expands WebGL clusters or closes drawer on empty canvas click
   const handleMapClick = function (e: any) {
     if (!mapRef.current) {
       setSelectedPin(null);
@@ -1818,7 +2069,7 @@ export default function VerseMapPage() {
             if (!err && mapRef.current) {
               mapRef.current.flyTo({
                 center: [clusterCoords[0], clusterCoords[1]],
-                zoom: Math.min(expansionZoom, 16),
+                zoom: Math.min(expansionZoom + 0.5, 16),
                 duration: 750,
                 essential: true,
               });
@@ -1833,25 +2084,6 @@ export default function VerseMapPage() {
           duration: 750,
           essential: true,
         });
-      }
-      return;
-    }
-
-    if (layerId === 'unclustered-point') {
-      const clickedPinId = topFeature.properties ? topFeature.properties.pinId : null;
-      if (clickedPinId !== null) {
-        const foundPin = spiderfiedPins.find(function (p) {
-          return String(p.id) === String(clickedPinId);
-        });
-        if (foundPin) {
-          setSelectedPin(foundPin);
-          mapRef.current.flyTo({
-            center: [foundPin.lng, foundPin.lat],
-            zoom: Math.max(mapRef.current.getZoom() || 11, 14),
-            duration: 900,
-            essential: true,
-          });
-        }
       }
     }
   };
@@ -1898,6 +2130,7 @@ export default function VerseMapPage() {
         fontFamily: 'system-ui, -apple-system, sans-serif',
       }}
     >
+      {/* TOP FILTER & CITY SEARCH BAR */}
       <div
         style={{
           position: 'absolute',
@@ -2070,6 +2303,7 @@ export default function VerseMapPage() {
         </div>
       </div>
 
+      {/* LEFT-ALIGNED DOCK: ERA TIME-MACHINE + FLOATING TOUR BUS CART */}
       <div
         style={{
           position: 'absolute',
@@ -2442,6 +2676,7 @@ export default function VerseMapPage() {
         </div>
       )}
 
+      {/* HYBRID MAPBOX CANVAS: WebGL Cluster Bubbles + Custom HTML/SVG Category Markers */}
       <MapboxMap
         ref={mapRef}
         initialViewState={INITIAL_MAP_VIEW}
@@ -2450,6 +2685,9 @@ export default function VerseMapPage() {
         style={MAP_CONTAINER_STYLE}
         interactiveLayerIds={INTERACTIVE_LAYER_IDS}
         cursor={mapCursor}
+        onLoad={syncViewportState}
+        onMove={syncViewportState}
+        onMoveEnd={syncViewportState}
         onClick={handleMapClick}
         onMouseMove={handleMapMouseMove}
       >
@@ -2472,13 +2710,14 @@ export default function VerseMapPage() {
           </Source>
         )}
 
+        {/* WebGL Cluster Bubbles Only (Unclustered WebGL circles removed) */}
         <Source
           id="pins"
           type="geojson"
           data={pinsGeoJson}
           cluster={true}
-          clusterMaxZoom={13}
-          clusterRadius={42}
+          clusterMaxZoom={CLUSTER_MAX_ZOOM}
+          clusterRadius={CLUSTER_RADIUS_PX}
         >
           <Layer
             id="clusters"
@@ -2493,43 +2732,38 @@ export default function VerseMapPage() {
             layout={CLUSTER_COUNT_LAYOUT}
             paint={CLUSTER_COUNT_PAINT}
           />
-          <Layer
-            id="unclustered-point-halo"
-            type="circle"
-            filter={UNCLUSTERED_FILTER}
-            paint={UNCLUSTERED_HALO_PAINT}
-          />
-          <Layer
-            id="unclustered-point"
-            type="circle"
-            filter={UNCLUSTERED_FILTER}
-            paint={UNCLUSTERED_POINT_PAINT}
-          />
         </Source>
 
-        {tourStops.map(function (stop, stopIdx) {
-          const spiderMatch = spiderfiedPins.find(function (sp) {
-            return String(sp.id) === String(stop.id);
-          });
-          const markerLat = spiderMatch ? (spiderMatch.displayLat ?? stop.lat) : stop.lat;
-          const markerLng = spiderMatch ? (spiderMatch.displayLng ?? stop.lng) : stop.lng;
-          const pinColor = getCategoryColor(stop.category);
+        {/* Step 4.2: Custom HTML/SVG Markers for Visible Unclustered Pins + Tour Bus Stops */}
+        {visibleHtmlPins.map(function (pin) {
+          const pinColor = getCategoryColor(pin.category);
           const isSelected = selectedPin
-            ? String(selectedPin.id) === String(stop.id)
+            ? String(selectedPin.id) === String(pin.id)
             : false;
+          const isHovered = hoveredPinId !== null && String(hoveredPinId) === String(pin.id);
+          const stopNumber = getTourStopNumber(pin.id);
+          const markerLat = pin.displayLat ?? pin.lat;
+          const markerLng = pin.displayLng ?? pin.lng;
+
+          let markerScale = 'scale(1)';
+          if (isSelected) {
+            markerScale = 'scale(1.3)';
+          } else if (isHovered) {
+            markerScale = 'scale(1.15)';
+          }
 
           return (
             <Marker
-              key={`tour-stop-${stop.id}`}
+              key={`custom-marker-${pin.id}`}
               latitude={markerLat}
               longitude={markerLng}
               anchor="bottom"
               onClick={function (e) {
                 e.originalEvent.stopPropagation();
-                setSelectedPin(stop);
+                setSelectedPin(pin);
                 if (mapRef.current) {
                   mapRef.current.flyTo({
-                    center: [stop.lng, stop.lat],
+                    center: [pin.lng, pin.lat],
                     zoom: Math.max(mapRef.current.getZoom() || 11, 14),
                     duration: 900,
                   });
@@ -2537,56 +2771,80 @@ export default function VerseMapPage() {
               }}
             >
               <div
-                title={`Tour Stop #${stopIdx + 1}: ${stop.title} (${stop.artist})`}
+                title={`${pin.title} (${pin.artist})`}
+                onMouseEnter={function () {
+                  setHoveredPinId(pin.id);
+                }}
+                onMouseLeave={function () {
+                  setHoveredPinId(null);
+                }}
                 style={{
                   position: 'relative',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  transform: isSelected ? 'scale(1.3)' : 'scale(1.1)',
-                  transition: 'transform 0.15s ease',
-                  zIndex: 5,
+                  transform: markerScale,
+                  transition: 'transform 0.18s cubic-bezier(0.22, 1, 0.36, 1)',
+                  zIndex: isSelected ? 25 : isHovered ? 18 : stopNumber !== null ? 12 : 4,
                 }}
               >
+                {stopNumber !== null && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: -7,
+                      right: -7,
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      backgroundColor: isRouteOptimized ? '#10b981' : '#f59e0b',
+                      color: '#09090b',
+                      fontSize: 11,
+                      fontWeight: 800,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '2px solid #09090b',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.65)',
+                      zIndex: 6,
+                    }}
+                  >
+                    {stopNumber}
+                  </div>
+                )}
+
                 <div
                   style={{
-                    position: 'absolute',
-                    top: -9,
-                    right: -9,
-                    width: 20,
-                    height: 20,
+                    width: 34,
+                    height: 34,
                     borderRadius: '50%',
-                    backgroundColor: isRouteOptimized ? '#10b981' : '#f59e0b',
-                    color: '#09090b',
-                    fontSize: 11,
-                    fontWeight: 800,
+                    backgroundColor: '#121216',
+                    border: isSelected
+                      ? '2.5px solid #ffffff'
+                      : `2.5px solid ${pinColor}`,
+                    boxShadow: isSelected
+                      ? `0 0 20px ${pinColor}, 0 0 8px #ffffff`
+                      : isHovered
+                      ? `0 0 14px ${pinColor}`
+                      : `0 3px 10px rgba(0,0,0,0.75), 0 0 8px ${pinColor}44`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    border: '2px solid #09090b',
-                    zIndex: 6,
                   }}
                 >
-                  {stopIdx + 1}
+                  {renderCategorySvgIcon(pin.category, pinColor)}
                 </div>
-                <div
-                  style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    backgroundColor: pinColor,
-                    border: isSelected ? '3px solid #ffffff' : '2px solid #fbbf24',
-                    boxShadow: `0 0 14px ${pinColor}`,
-                  }}
-                />
+
                 <div
                   style={{
                     width: 0,
                     height: 0,
-                    borderLeft: '5px solid transparent',
-                    borderRight: '5px solid transparent',
-                    borderTop: `7px solid ${pinColor}`,
+                    borderLeft: '6px solid transparent',
+                    borderRight: '6px solid transparent',
+                    borderTop: isSelected
+                      ? '8px solid #ffffff'
+                      : `8px solid ${pinColor}`,
                     marginTop: -1,
                   }}
                 />

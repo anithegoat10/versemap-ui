@@ -1692,7 +1692,7 @@ export default function VerseMapPage() {
     }
   };
 
-  const routeGeoJson: GeoJSON.FeatureCollection<GeoJSON.LineString> | null = useMemo(
+  const routeGeoJson: any = useMemo(
     function () {
       if (!isRouteOptimized || tourStops.length < 2) {
         return null;

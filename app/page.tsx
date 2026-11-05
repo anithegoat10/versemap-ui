@@ -1504,7 +1504,7 @@ export default function VerseMapPage() {
   );
 
   // Spiderfy overlapping pins so close neighbors remain distinct when zoomed past cluster threshold
-  const spiderfiedPins = useMemo(
+  const spiderfiedPins: NormalizedPin[] = useMemo(
     function () {
       const threshold = 0.00055;
       const offsetRadius = 0.00026;
@@ -1696,7 +1696,7 @@ export default function VerseMapPage() {
     }
   };
 
-  const routeGeoJson: any = useMemo(
+  const routeGeoJson: GeoJSON.FeatureCollection<GeoJSON,LineString> | null = useMemo(
     function () {
       if (!isRouteOptimized || tourStops.length < 2) {
         return null;
